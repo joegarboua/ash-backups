@@ -2,7 +2,7 @@
 -- PostgreSQL database cluster dump
 --
 
-\restrict 2iaihpq698wjJN5hil4zyMjEwGR9m9EGNMd29sI59VKa7JxHlT8Ngawz6vz3h8O
+\restrict pzXEs7eCCKacia7MjrdvhqmBeu7POYOkqcvUBXR72MykfcDebIODmz9m2kmauS1
 
 SET default_transaction_read_only = off;
 
@@ -27,7 +27,7 @@ ALTER ROLE agentyk WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION 
 
 
 
-\unrestrict 2iaihpq698wjJN5hil4zyMjEwGR9m9EGNMd29sI59VKa7JxHlT8Ngawz6vz3h8O
+\unrestrict pzXEs7eCCKacia7MjrdvhqmBeu7POYOkqcvUBXR72MykfcDebIODmz9m2kmauS1
 
 --
 -- Databases
@@ -43,7 +43,7 @@ ALTER ROLE agentyk WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION 
 -- PostgreSQL database dump
 --
 
-\restrict j9wzMka6bzgP5k75dGRkDOaJekFaiT7oNb665KxTeItVo0OMznazExiAucy28cq
+\restrict nOHg6uoj1CZyzSUic1D8h7UBewrUZfY8g41OR8WEHJMxoQSZedl6nkWKxfRplva
 
 -- Dumped from database version 16.13
 -- Dumped by pg_dump version 16.13
@@ -63,7 +63,7 @@ SET row_security = off;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict j9wzMka6bzgP5k75dGRkDOaJekFaiT7oNb665KxTeItVo0OMznazExiAucy28cq
+\unrestrict nOHg6uoj1CZyzSUic1D8h7UBewrUZfY8g41OR8WEHJMxoQSZedl6nkWKxfRplva
 
 --
 -- Database "agentyk" dump
@@ -73,7 +73,7 @@ SET row_security = off;
 -- PostgreSQL database dump
 --
 
-\restrict nXYVQjnfhkAhvvmktvFYggbji0eTy5fjze3Tk0TPnZNOitMvo4xmKWjqDTJYfkn
+\restrict UH9fd21lGJrET3OdsocNxlGw5TtR01GhsuZodOwjBWlM008cZu813G9aAu9T81I
 
 -- Dumped from database version 16.13
 -- Dumped by pg_dump version 16.13
@@ -98,9 +98,9 @@ CREATE DATABASE agentyk WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVI
 
 ALTER DATABASE agentyk OWNER TO agentyk;
 
-\unrestrict nXYVQjnfhkAhvvmktvFYggbji0eTy5fjze3Tk0TPnZNOitMvo4xmKWjqDTJYfkn
+\unrestrict UH9fd21lGJrET3OdsocNxlGw5TtR01GhsuZodOwjBWlM008cZu813G9aAu9T81I
 \connect agentyk
-\restrict nXYVQjnfhkAhvvmktvFYggbji0eTy5fjze3Tk0TPnZNOitMvo4xmKWjqDTJYfkn
+\restrict UH9fd21lGJrET3OdsocNxlGw5TtR01GhsuZodOwjBWlM008cZu813G9aAu9T81I
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -470,14 +470,20 @@ ALTER TABLE ONLY public.payments ALTER COLUMN id SET DEFAULT nextval('public.pay
 COPY public.accounts (id, username, email, password_hash, api_key, status, invoice_id, expires_at, webhook_url, quota_used, created_at, updated_at, recovery_email, forward_email, whitelist_enabled, whitelist_emails, recovery_seed_hash, failed_login_attempts, locked_until) FROM stdin;
 48	audittest	audittest@agentyk.ru	$2a$10$QRPH4LBJAkoi0KcT.FYvmu4dQOzM58TG3D3305fdrC15OHeh0jcGy	ee5c6314-ad79-4717-8253-3ba275086e7d	pending_payment	inv_345fa220-44d1-4fa6-9089-d0217a4cc5d3	\N	\N	0	2026-03-09 18:00:14.722662+00	2026-03-09 18:00:14.740037+00	\N	\N	f		$2a$10$k5yacocRuUD7rafqpTAEl.9cLVsqzXpXJJQYc9b5QrW9fZNReTZXG	0	\N
 51	neo	neo@agentyk.ru	$2a$10$F79O9xBpl/F98Kg.VpuvtOnEknBlvaSnikkqjx5YdUufIqWhzLe1W	e8b0fb0c-f131-479d-a628-4adeb90822f6	active	inv_e84b57c2-116a-41e4-9b80-cd01d2e107ad	2027-03-09 23:27:59.505835+00	\N	1	2026-03-09 23:27:53.251965+00	2026-03-09 23:28:38.488968+00	\N	\N	f		$2a$10$y0jETVuPwkdDVzuCDcUdMeEaT4lpOvqnbiBZFVC6Qy81MKbEFT.eu	0	\N
+58	gus	gus@agentyk.ru	$2a$10$v.G8HjhABp6o9MZvPk6peOoYR.Y1qWQqHg4x8Z0OEq1tqE9ozH0Bu	0ea7a74b-9323-4666-913d-8ddc2a349598	active	inv_86c8aa52-27a9-4843-bce8-2758bbd2c71a	2027-03-10 15:17:43.999405+00	\N	10	2026-03-10 15:17:38.518739+00	2026-03-10 20:13:36.461873+00	\N	\N	t	michel@gentyk.ru,api@agentyk.ru,ash@agentyk.ru,ash@gentyk.ru,bit@agentyk.ru,btc@agentyk.ru,doc@agentyk.ru,eva@agentyk.ru,hon@agentyk.ru,neo@agentyk.ru,ra-sun@agentyk.ru,rex@agentyk.ru,joe@gentyk.ru	$2a$10$I/ppmFJYG7.jyGRMZ29nVOmeQA4bljJkm0PCodB.PtHvojF3HVUMW	0	\N
 52	rex	rex@agentyk.ru	$2a$10$X3.CfmbblK1zSU4RRHgNAuLZjq4dKAIvQA4MDQh68PnFAikyKr3oy	6b1d7781-304f-4eec-9545-a4e6e3d1b8af	active	inv_c1a60c5e-f6f9-495b-aff8-3c240367b5b1	2027-03-09 23:30:08.164463+00	\N	7	2026-03-09 23:30:00.246249+00	2026-03-10 02:33:28.535642+00	\N	\N	f		$2a$10$yHrtxXUX/I6tQHM0FzTj9OgtSm.aboFVaoVOmncRzcMIvfaUQBn3K	0	\N
-25	michel	michel@agentyk.ru	$2b$12$iGQ.Nm00PI9LrAXH7uryVeOuHFdVqa0Z89siXmmSDWr.cIXeIASMu	7523a432-1527-4620-8f81-5c7c0ff9e576	active	inv_0c3eeb7c	2027-03-08 00:03:48.781285+00	\N	0	2026-03-08 00:03:40.689802+00	2026-03-08 05:24:22.184148+00	\N	\N	f			0	\N
+54	joe	joe@agentyk.ru	$2a$10$62xVz54/J5LhaHjrL3yvT.kU5nCIvh8FkBN9.HtXxqm.l9of4CG/e	01db637b-48b3-4d37-be0e-849f335191da	active	inv_d735af2d-5d91-4203-a665-349a1e07019c	2027-03-10 06:06:18.243805+00	\N	0	2026-03-10 05:57:58.204112+00	2026-03-10 06:06:18.243805+00	\N	\N	f		$2a$10$0EtsT2An8VElBn8Tg0BdguGThI3Qwgj0ZvFLJKXv5Ujkzj8R0/Bia	0	\N
+25	michel	michel@agentyk.ru	$2a$10$JvwywuH8GJ9UlYLbXBdTiuB.em017.D6YiHCEAj73mKpcVxRdpdhC	7523a432-1527-4620-8f81-5c7c0ff9e576	active	inv_561f67d6-3ef0-46b8-bb2d-3c8b256faf32	2027-03-08 00:03:48.781285+00	\N	0	2026-03-08 00:03:40.689802+00	2026-03-10 07:23:50.682607+00	josephgarboua@gmail.com	josephgarboua@gmail.com	f			0	\N
+56	btc	btc@agentyk.ru	$2a$10$aSAUF4JGatX.tVSwelUwveJQteXv3WbolvNSJ23BZfiMPIpFO84Vq	0863c80c-84f7-4fa0-9cb5-afa443bfa116	active	inv_6ae017b1-3890-43af-aa82-5a7e9778b16b	2027-03-10 14:38:09.827185+00	\N	0	2026-03-10 14:38:01.414332+00	2026-03-10 14:38:09.827185+00	\N	\N	f		$2a$10$YQISYuAaW6SztjN4OeVkWe1jXBVzwcV42AVmTda3p8dCqFx0HkRCm	0	\N
 28	ra-sun	ra-sun@agentyk.ru	$2b$12$26Q38Yy6dTfmpLvh34xW7eDcmXHJ5ZXt3VskJbpB0OSYs8ftu8zWu	0ebe154f-ccf9-4c2e-a228-2ded04c62c0d	active	inv_a69a15f3	2027-03-08 03:58:49.709915+00	\N	1	2026-03-08 03:58:32.569812+00	2026-03-08 04:06:17.986386+00	\N	\N	f		$6$73b0625489135d65$a6866e35db8132aa97f5f3e7b451f146bcb714e4c0838634d1131eb5b3635ec6602fda330f7c0fc49de283e8f222b9e64a07b58b182187d44057d3c31b09fba3	0	\N
-49	bit	bit@agentyk.ru	$2a$10$BR/JzEDMVFcY5u8HKcHS1ecsZMLE6CqmPvGdK3v8NFlGxsTXWVlrW	d7f938b7-4717-46a5-bf4f-9f0b3f7ff5ee	active	inv_787a721f-c2e0-46b7-a37e-02a0f44d7bcc	2027-03-09 18:34:45.560054+00	\N	5	2026-03-09 18:34:40.291506+00	2026-03-09 18:49:04.026697+00	\N	\N	f		$2a$10$rphKp8HIjkYcpMwJr5hoP.UTHZzVUYxgDzgMmD/tS8UShHOZKeLri	0	\N
+57	eva	eva@agentyk.ru	$2a$10$9vr/JHdjQAmEJk3ij7sECeNCGN881IqyrukUKb0pzz1HH7r5CZ0.O	e11185dd-046f-4c6e-88b4-adcc4516c2fc	active	inv_663ff291-7aa9-417b-8474-d6cbe91258b4	2027-03-10 15:04:05.307882+00	\N	22	2026-03-10 15:04:01.11922+00	2026-03-10 21:00:22.556885+00	\N	\N	t	michel@gentyk.ru,api@agentyk.ru,ash@agentyk.ru,ash@gentyk.ru,bit@agentyk.ru,bot@agentyk.ru,btc@agentyk.ru,doc@agentyk.ru,eva@agentyk.ru,gus@agentyk.ru,hon@agentyk.ru,neo@agentyk.ru,ra-sun@agentyk.ru,rex@agentyk.ru,joe@gentyk.ru	$2a$10$k06mOUpR7r0zFXFZpWBHA.c1TtvRmWJl7BjuXua88zTHK56NXKGjC	0	\N
+43	api	api@agentyk.ru	$2a$10$HoPCpLsULltqYhHzJ2afS.2mlZoN3aO0Yc3jr7yokRiqfs35BdTxu	99ff0013-67ef-4a77-8259-0326696cba81	active	inv_6cdaa39d-5361-4af2-ab74-69e2f8e753ad	2027-03-09 17:51:53.727054+00	\N	9	2026-03-09 17:18:14.10549+00	2026-03-10 21:21:46.389711+00	\N	\N	t	michel@gentyk.ru,api@agentyk.ru,ash@agentyk.ru,ash@gentyk.ru,bit@agentyk.ru,btc@agentyk.ru,doc@agentyk.ru,eva@agentyk.ru,gus@agentyk.ru,hon@agentyk.ru,neo@agentyk.ru,ra-sun@agentyk.ru,rex@agentyk.ru,joe@gentyk.ru,bot@agentyk.ru	$2a$10$K0FQ0NvNR7w7w/owLoVAQORwrj8/KjNlhJHC7s.ACQw8nUKOAVy3e	0	\N
 26	doc	doc@agentyk.ru	$2b$12$6p1/Bw9J8kuIRVXcOGibY.uEtTjzlUr25kcxMhWj5p/SxXHtwiU3K	f0a93c76-4081-4e08-8a6e-6b1feba673d6	active	inv_fc5333e0	2027-03-08 00:39:52.48905+00	\N	5	2026-03-08 00:39:46.83973+00	2026-03-09 22:44:46.319479+00	josephgarboua@gmail.com	josephgarboua@gmail.com	f			0	\N
+49	bit	bit@agentyk.ru	$2a$10$BR/JzEDMVFcY5u8HKcHS1ecsZMLE6CqmPvGdK3v8NFlGxsTXWVlrW	d7f938b7-4717-46a5-bf4f-9f0b3f7ff5ee	active	inv_787a721f-c2e0-46b7-a37e-02a0f44d7bcc	2027-03-09 18:34:45.560054+00	\N	6	2026-03-09 18:34:40.291506+00	2026-03-10 21:27:51.221978+00	\N	\N	t	michel@gentyk.ru,api@agentyk.ru,ash@agentyk.ru,ash@gentyk.ru,bit@agentyk.ru,btc@agentyk.ru,doc@agentyk.ru,eva@agentyk.ru,gus@agentyk.ru,hon@agentyk.ru,neo@agentyk.ru,ra-sun@agentyk.ru,rex@agentyk.ru,joe@gentyk.ru,bot@agentyk.ru	$2a$10$rphKp8HIjkYcpMwJr5hoP.UTHZzVUYxgDzgMmD/tS8UShHOZKeLri	0	\N
 27	hon	hon@agentyk.ru	$2b$12$6PlYvGOq8wTMMyR46.JaROSADn8IYAbUIRr4TdK4SdRHN3F2Y1I0S	a2c5b84e-8d38-45fb-b302-abe8f96a928a	active	inv_9a80a82e	2028-03-07 03:20:07.561275+00	\N	2	2026-03-08 03:19:48.17881+00	2026-03-08 04:12:35.792043+00	micheldegeofroy@gmail.com	\N	f		$6$46653ce60c018ef4$089a4fb70e6633e12e2ad9c710be9c37f5c42ec33aed24eea03cf6ad87f2ace5d63179698676d0d493775240c818ba40b7b81e021ab288a832037b8b2b898112	0	\N
-43	api	api@agentyk.ru	$2a$10$9Ae0QVAMDuIsyGr9uwZYh.lHnN6kYFS/y8e/9wvdg6lVU5AEjzggu	99ff0013-67ef-4a77-8259-0326696cba81	active	inv_6cdaa39d-5361-4af2-ab74-69e2f8e753ad	2027-03-09 17:51:53.727054+00	\N	4	2026-03-09 17:18:14.10549+00	2026-03-10 01:43:52.079229+00	\N	\N	f		$2a$10$K0FQ0NvNR7w7w/owLoVAQORwrj8/KjNlhJHC7s.ACQw8nUKOAVy3e	0	\N
+59	bot	bot@agentyk.ru	$2a$10$bg5lC2FR36qBeqTt1L7YAu9ds56JzzHs6BHeHOGEjPPFZjIYNzkCG	3783e2fc-12ee-4c30-b724-101482b68d1b	active	inv_b068b83b-be30-4ce2-b65e-aef7978e7ceb	2027-03-10 20:30:18.487749+00	\N	13	2026-03-10 20:30:09.792691+00	2026-03-10 20:31:02.358997+00	\N	\N	t	michel@gentyk.ru,api@agentyk.ru,ash@agentyk.ru,ash@gentyk.ru,bit@agentyk.ru,btc@agentyk.ru,doc@agentyk.ru,eva@agentyk.ru,gus@agentyk.ru,hon@agentyk.ru,neo@agentyk.ru,ra-sun@agentyk.ru,rex@agentyk.ru,joe@gentyk.ru	$2a$10$JWSAn2KFpcl2yCRlN79tvuY0a07CpCm8PQ6JkleZSJ462qmag012y	0	\N
 50	ash	ash@agentyk.ru	$2a$10$32p3jbTkG5iP944qQkzcuu8HAC36I9UA6DRQC36vYgTL33.1G03sC	51bb956b-638b-4915-a82d-4f08a244bbea	active	inv_4fb10c38-b36b-41ce-b7cb-9dfe5028fe23	2027-03-09 18:47:07.038328+00	\N	16	2026-03-09 18:46:20.174779+00	2026-03-10 02:50:40.040649+00	\N	\N	f		$2a$10$3TY896qZ/8YwpSWyQLAalekZfydNIDbPH8pgTk7Cp7JACnLv3edNW	0	\N
+53	333	333@agentyk.ru	$2a$10$l9geHWUorosIhPZJNg9sBueXYuaMFNt61LKrz.PyPi3ItOARv.tfW	c50c82be-efb1-4635-969f-3617121944ed	pending_payment	inv_c02dfaa4-9789-447f-8734-d707d4a250ed	\N	\N	0	2026-03-10 04:11:10.185453+00	2026-03-10 04:11:10.194867+00	\N	\N	f		$2a$10$dMskSKtwakvNyDtGi94JPOz38AaGJHXwEuLjHgDx32VuSRj51sGtW	0	\N
 \.
 
 
@@ -514,6 +520,43 @@ COPY public.audit_log (id, account_id, event_type, ip_address, details, created_
 40	52	coupon_redeemed	46.225.1.128	coupon AYK-BC62-4916-E892 (365d)	2026-03-09 23:30:08.172525+00
 41	50	encryption_key_uploaded	172.18.0.1	PGP key uploaded for encryption at rest	2026-03-10 02:50:30.057636+00
 42	50	encryption_disabled	172.18.0.1	Encryption at rest disabled	2026-03-10 02:51:13.469323+00
+43	53	account_created	46.225.1.128	333@agentyk.ru	2026-03-10 04:11:10.320361+00
+44	25	login_failed	46.225.1.128	bad password	2026-03-10 05:34:54.73899+00
+45	25	login_failed	46.225.1.128	bad password	2026-03-10 05:35:28.988653+00
+46	25	login_failed	46.225.1.128	bad password	2026-03-10 05:35:37.653162+00
+47	25	login_failed	46.225.1.128	bad password	2026-03-10 05:38:05.858639+00
+48	25	login_failed	46.225.1.128	bad password	2026-03-10 05:38:44.863156+00
+49	25	password_changed	172.18.0.1	via API key	2026-03-10 05:39:04.036507+00
+50	25	login_success	46.225.1.128		2026-03-10 05:39:19.558194+00
+51	25	login_success	46.225.1.128		2026-03-10 05:39:58.687186+00
+52	25	recovery_email_set	46.225.1.128	set to josephgarboua@gmail.com	2026-03-10 05:39:58.689467+00
+53	25	login_success	46.225.1.128		2026-03-10 05:40:10.780437+00
+54	25	forward_email_set	46.225.1.128	forward to josephgarboua@gmail.com	2026-03-10 05:40:10.826658+00
+55	25	login_success	46.225.1.128		2026-03-10 05:41:39.941064+00
+56	25	login_success	46.225.1.128		2026-03-10 05:47:40.078857+00
+57	54	account_created	46.225.1.128	joe@agentyk.ru	2026-03-10 05:57:58.353061+00
+58	54	coupon_redeemed	46.225.1.128	coupon AYK-590D-829D-C327 (365d)	2026-03-10 06:06:18.257775+00
+59	25	login_success	46.225.1.128		2026-03-10 07:23:50.68576+00
+60	\N	account_created	172.18.0.1	qrtest99@agentyk.ru	2026-03-10 08:10:19.112658+00
+61	56	account_created	46.225.1.128	btc@agentyk.ru	2026-03-10 14:38:01.557449+00
+62	56	coupon_redeemed	46.225.1.128	coupon AYK-B825-495B-0ECF (365d)	2026-03-10 14:38:09.841006+00
+63	57	account_created	46.225.1.128	eva@agentyk.ru	2026-03-10 15:04:01.241269+00
+64	57	coupon_redeemed	46.225.1.128	coupon AYK-2927-4A8E-74E0 (365d)	2026-03-10 15:04:05.339409+00
+65	57	whitelist_changed	46.225.1.128	enabled=true count=11	2026-03-10 15:06:37.366857+00
+66	58	account_created	46.225.1.128	gus@agentyk.ru	2026-03-10 15:17:38.659093+00
+67	58	coupon_redeemed	46.225.1.128	coupon AYK-AE6A-9BA8-D0ED (365d)	2026-03-10 15:17:44.004945+00
+68	57	whitelist_changed	46.225.1.128	enabled=true count=12	2026-03-10 15:29:34.296233+00
+69	43	password_changed	46.225.1.128	via API key	2026-03-10 15:33:51.980965+00
+70	43	recovery_used	46.225.1.128	via seed phrase	2026-03-10 15:34:04.008597+00
+71	57	whitelist_changed	46.225.1.128	enabled=true count=14	2026-03-10 16:30:00.235618+00
+72	49	whitelist_changed	46.225.1.128	enabled=true count=14	2026-03-10 18:57:28.833481+00
+73	58	whitelist_changed	46.225.1.128	enabled=true count=13	2026-03-10 20:13:36.50337+00
+74	59	account_created	46.225.1.128	bot@agentyk.ru	2026-03-10 20:30:09.945911+00
+75	59	coupon_redeemed	46.225.1.128	coupon AYK-70C7-A411-AFBE (365d)	2026-03-10 20:30:18.542181+00
+76	59	whitelist_changed	46.225.1.128	enabled=true count=14	2026-03-10 20:30:48.405185+00
+77	57	whitelist_changed	46.225.1.128	enabled=true count=15	2026-03-10 21:00:22.581657+00
+78	43	whitelist_changed	46.225.1.128	enabled=true count=15	2026-03-10 21:21:46.490768+00
+79	49	whitelist_changed	46.225.1.128	enabled=true count=15	2026-03-10 21:27:51.308932+00
 \.
 
 
@@ -541,9 +584,6 @@ COPY public.coupons (id, code, duration_days, created_by, used_by, used_at, crea
 26	AYK-93AF-F3D3-71D5	365	father	\N	\N	2026-03-09 17:20:03.468903+00
 27	AYK-CA9C-307B-245F	365	father	\N	\N	2026-03-09 17:20:03.468903+00
 28	AYK-4501-1DC9-D632	365	father	\N	\N	2026-03-09 17:20:03.468903+00
-34	AYK-2927-4A8E-74E0	365	father	\N	\N	2026-03-09 17:20:03.468903+00
-35	AYK-AE6A-9BA8-D0ED	365	father	\N	\N	2026-03-09 17:20:03.468903+00
-36	AYK-70C7-A411-AFBE	365	father	\N	\N	2026-03-09 17:20:03.468903+00
 31	AYK-9725-39EB-DB77	365	father	\N	\N	2026-03-09 17:20:03.468903+00
 30	AYK-63A3-ADAD-7969	365	father	\N	\N	2026-03-09 17:20:03.468903+00
 29	AYK-E6EC-706D-42DD	365	father	43	2026-03-09 17:51:53.727054+00	2026-03-09 17:20:03.468903+00
@@ -560,6 +600,12 @@ COPY public.coupons (id, code, duration_days, created_by, used_by, used_at, crea
 3	AYK-BBC8-8650-3C49	365	father	50	2026-03-09 18:47:07.038328+00	2026-03-07 20:12:21.543024+00
 32	AYK-D03E-AF25-5301	365	father	51	2026-03-09 23:27:59.505835+00	2026-03-09 17:20:03.468903+00
 33	AYK-BC62-4916-E892	365	father	52	2026-03-09 23:30:08.164463+00	2026-03-09 17:20:03.468903+00
+41	AYK-C4CA-F1D6-8251	365	father	\N	\N	2026-03-10 05:58:15.307329+00
+42	AYK-590D-829D-C327	365	father	54	2026-03-10 06:06:18.243805+00	2026-03-10 06:05:24.206589+00
+43	AYK-B825-495B-0ECF	365	father	56	2026-03-10 14:38:09.827185+00	2026-03-10 14:29:15.651534+00
+34	AYK-2927-4A8E-74E0	365	father	57	2026-03-10 15:04:05.307882+00	2026-03-09 17:20:03.468903+00
+35	AYK-AE6A-9BA8-D0ED	365	father	58	2026-03-10 15:17:43.999405+00	2026-03-09 17:20:03.468903+00
+36	AYK-70C7-A411-AFBE	365	father	59	2026-03-10 20:30:18.487749+00	2026-03-09 17:20:03.468903+00
 \.
 
 
@@ -597,6 +643,13 @@ COPY public.payments (id, account_id, invoice_id, amount_eur, amount_btc, status
 58	50	inv_4fb10c38-b36b-41ce-b7cb-9dfe5028fe23	60.00		paid		2026-03-09 18:47:07.038328+00	2026-03-09 18:46:20.379051+00
 59	51	inv_e84b57c2-116a-41e4-9b80-cd01d2e107ad	60.00		paid		2026-03-09 23:27:59.505835+00	2026-03-09 23:27:53.447462+00
 60	52	inv_c1a60c5e-f6f9-495b-aff8-3c240367b5b1	60.00		paid		2026-03-09 23:30:08.164463+00	2026-03-09 23:30:00.330552+00
+61	53	inv_c02dfaa4-9789-447f-8734-d707d4a250ed	60.00		pending		\N	2026-03-10 04:11:10.314589+00
+62	25	inv_561f67d6-3ef0-46b8-bb2d-3c8b256faf32	60.00		pending		\N	2026-03-10 05:47:40.889208+00
+63	54	inv_d735af2d-5d91-4203-a665-349a1e07019c	60.00		paid		2026-03-10 06:06:18.243805+00	2026-03-10 05:57:58.348886+00
+65	56	inv_6ae017b1-3890-43af-aa82-5a7e9778b16b	60.00		paid		2026-03-10 14:38:09.827185+00	2026-03-10 14:38:01.553493+00
+66	57	inv_663ff291-7aa9-417b-8474-d6cbe91258b4	60.00		paid		2026-03-10 15:04:05.307882+00	2026-03-10 15:04:01.237092+00
+67	58	inv_86c8aa52-27a9-4843-bce8-2758bbd2c71a	60.00		paid		2026-03-10 15:17:43.999405+00	2026-03-10 15:17:38.65603+00
+68	59	inv_b068b83b-be30-4ce2-b65e-aef7978e7ceb	60.00		paid		2026-03-10 20:30:18.487749+00	2026-03-10 20:30:09.934133+00
 25	25	inv_6e3be135	60.00		paid		2026-03-08 00:03:48.781285+00	2026-03-08 00:03:40.708312+00
 26	26	inv_fc5333e0	60.00		paid		2026-03-08 00:39:52.48905+00	2026-03-08 00:39:46.866425+00
 27	27	inv_85bdcfe6	60.00		paid		2026-03-08 03:20:07.561275+00	2026-03-08 03:19:48.224196+00
@@ -612,21 +665,21 @@ COPY public.payments (id, account_id, invoice_id, amount_eur, amount_btc, status
 -- Name: accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agentyk
 --
 
-SELECT pg_catalog.setval('public.accounts_id_seq', 52, true);
+SELECT pg_catalog.setval('public.accounts_id_seq', 59, true);
 
 
 --
 -- Name: audit_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agentyk
 --
 
-SELECT pg_catalog.setval('public.audit_log_id_seq', 42, true);
+SELECT pg_catalog.setval('public.audit_log_id_seq', 79, true);
 
 
 --
 -- Name: coupons_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agentyk
 --
 
-SELECT pg_catalog.setval('public.coupons_id_seq', 40, true);
+SELECT pg_catalog.setval('public.coupons_id_seq', 43, true);
 
 
 --
@@ -654,7 +707,7 @@ SELECT pg_catalog.setval('public.password_resets_id_seq', 1, false);
 -- Name: payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agentyk
 --
 
-SELECT pg_catalog.setval('public.payments_id_seq', 60, true);
+SELECT pg_catalog.setval('public.payments_id_seq', 68, true);
 
 
 --
@@ -882,7 +935,7 @@ ALTER TABLE ONLY public.payments
 -- PostgreSQL database dump complete
 --
 
-\unrestrict nXYVQjnfhkAhvvmktvFYggbji0eTy5fjze3Tk0TPnZNOitMvo4xmKWjqDTJYfkn
+\unrestrict UH9fd21lGJrET3OdsocNxlGw5TtR01GhsuZodOwjBWlM008cZu813G9aAu9T81I
 
 --
 -- Database "btcpay" dump
@@ -892,7 +945,7 @@ ALTER TABLE ONLY public.payments
 -- PostgreSQL database dump
 --
 
-\restrict r7wckYNljaWhtD9ZzjGLevQeMnjm6IaHiOma1eALuQW7jcIOSxd5cJhhvtF1egn
+\restrict uReVfDmg4bYoBlzJv35pEDadeXbrYbK5SbDDVFfqgQbzTQa74UBYnEk9WbQL88v
 
 -- Dumped from database version 16.13
 -- Dumped by pg_dump version 16.13
@@ -917,9 +970,9 @@ CREATE DATABASE btcpay WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVID
 
 ALTER DATABASE btcpay OWNER TO agentyk;
 
-\unrestrict r7wckYNljaWhtD9ZzjGLevQeMnjm6IaHiOma1eALuQW7jcIOSxd5cJhhvtF1egn
+\unrestrict uReVfDmg4bYoBlzJv35pEDadeXbrYbK5SbDDVFfqgQbzTQa74UBYnEk9WbQL88v
 \connect btcpay
-\restrict r7wckYNljaWhtD9ZzjGLevQeMnjm6IaHiOma1eALuQW7jcIOSxd5cJhhvtF1egn
+\restrict uReVfDmg4bYoBlzJv35pEDadeXbrYbK5SbDDVFfqgQbzTQa74UBYnEk9WbQL88v
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -4363,7 +4416,7 @@ ALTER TABLE ONLY public.lang_translations
 -- PostgreSQL database dump complete
 --
 
-\unrestrict r7wckYNljaWhtD9ZzjGLevQeMnjm6IaHiOma1eALuQW7jcIOSxd5cJhhvtF1egn
+\unrestrict uReVfDmg4bYoBlzJv35pEDadeXbrYbK5SbDDVFfqgQbzTQa74UBYnEk9WbQL88v
 
 --
 -- Database "nbxplorer" dump
@@ -4373,7 +4426,7 @@ ALTER TABLE ONLY public.lang_translations
 -- PostgreSQL database dump
 --
 
-\restrict XL2amhRKrxbzBPIQJAUyLe6ewvyrv79h5o9wIunQACDRugm0cdJBq5m2YpvxFLC
+\restrict 6fgAbO1YGheDc8aNOnk7aebYcw8OViN757K7V2LhzcIlfH2uhE9cQoQq3TMhA4l
 
 -- Dumped from database version 16.13
 -- Dumped by pg_dump version 16.13
@@ -4398,9 +4451,9 @@ CREATE DATABASE nbxplorer WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PRO
 
 ALTER DATABASE nbxplorer OWNER TO agentyk;
 
-\unrestrict XL2amhRKrxbzBPIQJAUyLe6ewvyrv79h5o9wIunQACDRugm0cdJBq5m2YpvxFLC
+\unrestrict 6fgAbO1YGheDc8aNOnk7aebYcw8OViN757K7V2LhzcIlfH2uhE9cQoQq3TMhA4l
 \connect nbxplorer
-\restrict XL2amhRKrxbzBPIQJAUyLe6ewvyrv79h5o9wIunQACDRugm0cdJBq5m2YpvxFLC
+\restrict 6fgAbO1YGheDc8aNOnk7aebYcw8OViN757K7V2LhzcIlfH2uhE9cQoQq3TMhA4l
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -6894,7 +6947,7 @@ REFRESH MATERIALIZED VIEW public.wallets_history;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict XL2amhRKrxbzBPIQJAUyLe6ewvyrv79h5o9wIunQACDRugm0cdJBq5m2YpvxFLC
+\unrestrict 6fgAbO1YGheDc8aNOnk7aebYcw8OViN757K7V2LhzcIlfH2uhE9cQoQq3TMhA4l
 
 --
 -- Database "postgres" dump
@@ -6906,7 +6959,7 @@ REFRESH MATERIALIZED VIEW public.wallets_history;
 -- PostgreSQL database dump
 --
 
-\restrict doBa5kQkIg6N848fhaaOdvHaGTEVPdxJvUOuz7f5vWDdcVweLSVM1efXVmJcmpr
+\restrict Aw8OXgFbz0JaRDARzMWSgweRpaLgOpueXQmESbeUwfXVLbAf2E3ngRFloC7eKCW
 
 -- Dumped from database version 16.13
 -- Dumped by pg_dump version 16.13
@@ -6926,7 +6979,7 @@ SET row_security = off;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict doBa5kQkIg6N848fhaaOdvHaGTEVPdxJvUOuz7f5vWDdcVweLSVM1efXVmJcmpr
+\unrestrict Aw8OXgFbz0JaRDARzMWSgweRpaLgOpueXQmESbeUwfXVLbAf2E3ngRFloC7eKCW
 
 --
 -- PostgreSQL database cluster dump complete
