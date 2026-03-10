@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentYK — Help</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono',Monaco,'Courier New',monospace;background:#000;color:#ccc;min-height:100vh;display:flex;justify-content:center;align-items:center;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+.container{max-width:400px;width:90%;padding:2rem}
+h1{color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:1.4rem;font-weight:700;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.5px}
+.subtitle{color:#555;margin-bottom:2rem;font-size:0.82rem}
+.form-group{margin-bottom:1.2rem}
+label{display:block;color:#555;margin-bottom:0.3rem;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px}
+input,textarea{width:100%;padding:0.7rem 0.2rem;background:transparent;border:none;border-bottom:1px solid #333;color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.9rem;border-radius:0}
+input:focus,textarea:focus{outline:none;border-bottom-color:#fff}
+input::placeholder,textarea::placeholder{color:#333}
+textarea{min-height:120px;resize:vertical;border:1px solid #1a1a1a;padding:0.7rem}
+button{width:100%;padding:14px;background:transparent;color:#ccc;border:1px solid #333;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.9rem;font-weight:500;cursor:pointer;border-radius:0;transition:all 0.2s;text-transform:uppercase;letter-spacing:0.5px}
+button:hover{border-color:#fff;color:#fff}
+button:disabled{color:#333;border-color:#1a1a1a;cursor:not-allowed}
+.success{color:#fff;margin-top:1rem;display:none;font-size:0.82rem}
+.error{color:#999;margin-top:1rem;display:none;font-size:0.82rem}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Help</h1>
+    <p class="subtitle">Stuck payment? Account issue? Let us know.</p>
+
+    <div class="form-group">
+        <label for="email">Your email (optional)</label>
+        <input type="text" id="email" placeholder="you@{{.domain}}">
+    </div>
+    <div class="form-group">
+        <label for="invoice">Invoice ID (optional)</label>
+        <input type="text" id="invoice" placeholder="invoice_id from registration">
+    </div>
+    <div class="form-group">
+        <label for="message">Message *</label>
+        <textarea id="message" placeholder="Describe your issue..."></textarea>
+    </div>
+
+    <button id="submit-btn" onclick="submitHelp()">Send</button>
+
+    <div class="success" id="success">Message sent. We'll get back to you.</div>
+    <div class="error" id="error"></div>
+</div>
+
+<script>
+async function submitHelp() {
+    const btn = document.getElementById("submit-btn");
+    const errEl = document.getElementById("error");
+    const sucEl = document.getElementById("success");
+    errEl.style.display = "none";
+    sucEl.style.display = "none";
+
+    const message = document.getElementById("message").value.trim();
+    if (!message) { errEl.textContent = "Message is required"; errEl.style.display = "block"; return; }
+
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    try {
+        const r = await fetch("/help", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                email: document.getElementById("email").value.trim(),
+                invoice_id: document.getElementById("invoice").value.trim(),
+                message: message,
+            })
+        });
+        const data = await r.json();
+        if (!r.ok) {
+            errEl.textContent = data.error || "Failed to send";
+            errEl.style.display = "block";
+            return;
+        }
+        sucEl.style.display = "block";
+        document.getElementById("message").value = "";
+    } catch(e) {
+        errEl.textContent = "Network error: " + e.message;
+        errEl.style.display = "block";
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Send";
+    }
+}
+</script>
+</body>
+</html>

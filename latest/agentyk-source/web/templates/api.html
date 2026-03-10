@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentyk API</title>
+<meta name="description" content="REST API documentation for Agentyk email service.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono',Monaco,'Courier New',monospace;background:#000;color:#ccc;padding:2rem 1rem;line-height:1.6;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+.wrap{max-width:800px;margin:0 auto}
+.brand{text-align:center;margin-bottom:2rem}
+.logo{font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.5px}
+.tagline{color:#555;font-size:0.85rem;margin-top:0.3rem}
+h2{color:#fff;font-size:1rem;margin:2.5rem 0 1rem;padding-bottom:0.4rem;border-bottom:1px solid #1a1a1a;text-transform:uppercase;letter-spacing:0.5px}
+h3{color:#999;font-size:0.85rem;margin:1.5rem 0 0.5rem;text-transform:uppercase;letter-spacing:0.5px}
+p{color:#666;margin-bottom:0.6rem;font-size:0.82rem}
+code{background:#0a0a0a;color:#999;padding:0.15rem 0.4rem;border-radius:0;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.78rem}
+pre{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:0;padding:1rem;margin:0.8rem 0;overflow-x:auto;font-size:0.78rem;color:#999;line-height:1.5}
+.endpoint{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:0;padding:1rem 1.2rem;margin:0.6rem 0}
+.method{display:inline-block;font-weight:700;font-size:0.7rem;padding:0.2rem 0.5rem;border-radius:0;margin-right:0.5rem;font-family:'SF Mono',Monaco,monospace;text-transform:uppercase;letter-spacing:0.5px}
+.get{background:transparent;color:#666;border:1px solid #333}
+.post{background:transparent;color:#999;border:1px solid #333}
+.delete{background:transparent;color:#999;border:1px solid rgba(229,57,53,0.3)}
+.path{color:#fff;font-size:0.82rem}
+.desc{color:#555;font-size:0.78rem;margin-top:0.4rem}
+.param{color:#666;font-size:0.75rem;margin-top:0.3rem}
+.param span{color:#999}
+.badge{display:inline-block;font-size:0.65rem;padding:0.15rem 0.45rem;border-radius:0;margin-left:0.5rem;vertical-align:middle;text-transform:uppercase;letter-spacing:0.5px}
+.badge-key{background:transparent;color:#555;border:1px solid #333}
+.badge-auth{background:transparent;color:#555;border:1px solid #333}
+table{width:100%;border-collapse:collapse;margin:0.8rem 0;font-size:0.78rem}
+th{text-align:left;color:#555;font-weight:500;padding:0.5rem 0.8rem;border-bottom:1px solid #1a1a1a;text-transform:uppercase;letter-spacing:0.5px;font-size:0.7rem}
+td{padding:0.5rem 0.8rem;border-bottom:1px solid #111;color:#999}
+td:first-child{color:#fff;font-weight:500}
+.note{padding:0.8rem 0;border-top:1px solid #1a1a1a;color:#555;font-size:0.78rem;margin:1rem 0}
+.note strong{color:#999}
+a{color:#fff;text-decoration:none}
+a:hover{color:#999}
+.nav{text-align:center;margin-bottom:2rem;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px}
+.nav a{color:#555;margin:0 0.8rem}
+.nav a:hover{color:#fff}
+.toc{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:0;padding:1rem 1.5rem;margin-bottom:2rem}
+.toc ul{list-style:none;columns:2}
+.toc li{padding:0.2rem 0}
+.toc a{color:#555;font-size:0.78rem}
+.toc a:hover{color:#fff}
+@media(max-width:600px){.toc ul{columns:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="brand">
+    <div class="logo">agentyk api</div>
+    <div class="tagline">REST API Reference</div>
+</div>
+
+<div class="nav">
+    <a href="/">Register</a>
+    <a href="/login">Login</a>
+    <a href="/docs">Machine-readable JSON</a>
+    <a href="/help">Help</a>
+</div>
+
+<div class="toc">
+<strong style="color:#555;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px">Contents</strong>
+<ul>
+<li><a href="#quickstart">Quick Start</a></li>
+<li><a href="#auth">Authentication</a></li>
+<li><a href="#registration">Registration</a></li>
+<li><a href="#payment">Payment</a></li>
+<li><a href="#email">Email API</a></li>
+<li><a href="#account">Account Management</a></li>
+<li><a href="#whitelist">Sender Whitelist</a></li>
+<li><a href="#recovery">Password Reset & Recovery</a></li>
+<li><a href="#lifecycle">Account Lifecycle</a></li>
+<li><a href="#server">Server Details</a></li>
+</ul>
+</div>
+
+<h2 id="quickstart">Quick Start</h2>
+<pre>
+# 1. Register
+curl -X POST https://agentyk.ru/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"myagent"}'
+
+# Response: {email, temp_password, api_key, recovery_seed, invoice_id, btc_wallet, amount_btc}
+
+# 2. Activate with coupon (or pay BTC to btc_wallet)
+curl -X POST https://agentyk.ru/register/redeem \
+  -H "Content-Type: application/json" \
+  -d '{"invoice_id":"INV-xxx","coupon":"AYK-XXXX-XXXX-XXXX"}'
+
+# 3. Send email
+curl -X POST https://agentyk.ru/mail/send \
+  -H "X-API-Key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"to":"someone@example.com","subject":"Hello","body":"Hi from my agent"}'
+
+# 4. Read inbox
+curl https://agentyk.ru/mail -H "X-API-Key: your-api-key"
+</pre>
+
+<h2 id="auth">Authentication</h2>
+<p>Two authentication methods depending on endpoint group:</p>
+<table>
+<tr><th>Method</th><th>Used for</th><th>How</th></tr>
+<tr><td>API Key</td><td><code>/mail/*</code> and <code>/account/*</code></td><td><code>X-API-Key</code> header</td></tr>
+<tr><td>Email + Password</td><td><code>/login/*</code> management</td><td>JSON body: <code>{"email":"...","password":"..."}</code></td></tr>
+</table>
+
+<h2 id="registration">Registration</h2>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/register</span>
+    <div class="desc">Create a new email account</div>
+    <div class="param">Body: <span>{"username": "desired-name"}</span></div>
+    <div class="param">Returns: <span>email, temp_password, api_key, recovery_seed (12 words), invoice_id, btc_wallet, amount_btc</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method get">GET</span><span class="path">/register/status/:invoice_id</span>
+    <div class="desc">Check payment status</div>
+    <div class="param">Returns: <span>{"status": "pending_payment | settled"}</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/register/redeem</span>
+    <div class="desc">Activate account with coupon code</div>
+    <div class="param">Body: <span>{"invoice_id": "...", "coupon": "AYK-XXXX-XXXX-XXXX"}</span></div>
+</div>
+
+<p>Username rules: 3-32 characters, lowercase alphanumeric, dots, hyphens. Must start and end with letter or number.</p>
+
+<div class="note"><strong>Important:</strong> Save your <code>recovery_seed</code> immediately. It is shown only once at registration and cannot be retrieved later.</div>
+
+<h2 id="payment">Payment</h2>
+<p><strong style="color:#fff">$60 USD/year</strong>, payable in Bitcoin or coupon.</p>
+
+<h3>Option A: Bitcoin</h3>
+<p>Send the exact <code>amount_btc</code> to the <code>btc_wallet</code> address returned at registration. Monitor with <code>GET /register/status/:invoice_id</code> until status is <code>settled</code>.</p>
+
+<h3>Option B: Coupon</h3>
+<p><code>POST /register/redeem</code> with the invoice ID and coupon code. Instant activation.</p>
+
+<div class="note"><strong>24h hold:</strong> The email address is reserved for 24 hours pending payment. If no payment is received, the address is recycled.</div>
+
+<h2 id="email">Email API</h2>
+<p>All endpoints require <code>X-API-Key</code> header.<span class="badge badge-key">API Key</span></p>
+
+<div class="endpoint">
+    <span class="method get">GET</span><span class="path">/mail</span><span class="badge badge-key">API Key</span>
+    <div class="desc">List messages in mailbox</div>
+    <div class="param">Query params (all optional, combinable): <span>folder, search, from, to, subject, since, before</span></div>
+    <div class="param">Returns: <span>[{id, from, to, subject, date, size}]</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method get">GET</span><span class="path">/mail/:id</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Read a single message</div>
+    <div class="param">Returns: <span>{id, from, to, subject, body, date, attachments: [{blobId, filename, type, size}]}</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method get">GET</span><span class="path">/mail/attachment/:blobId</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Download attachment (raw binary)</div>
+    <div class="param">Use <span>blobId</span> from the message attachments array</div>
+</div>
+
+<div class="endpoint">
+    <span class="method delete">DELETE</span><span class="path">/mail/:id</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Delete a message</div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/mail/send</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Send an email</div>
+    <div class="param">Body: <span>{"to":"recipient@example.com", "subject":"...", "body":"...", "attachments":[{"filename":"file.pdf", "content":"base64...", "type":"application/pdf"}]}</span></div>
+    <div class="param">Attachments are optional. Content is base64-encoded.</div>
+</div>
+
+<h2 id="account">Account Management</h2>
+
+<div class="endpoint">
+    <span class="method get">GET</span><span class="path">/account/status</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Get account info</div>
+    <div class="param">Returns: <span>email, status, expires_at, quota_used, created_at</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/account/change-password</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Change password (via API key)</div>
+    <div class="param">Body: <span>{"new_password": "min 8 chars, 1 uppercase, 1 number, 1 special"}</span></div>
+</div>
+
+<h3>Login-based Management</h3>
+<p>These require <code>email</code> and <code>password</code> in the JSON body.<span class="badge badge-auth">email+pw</span></p>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login</span><span class="badge badge-auth">email+pw</span>
+    <div class="desc">Login / get account details</div>
+    <div class="param">Returns: <span>email, username, status, api_key, expires_at, recovery_email, forward_email</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/change-password</span><span class="badge badge-auth">email+pw</span>
+    <div class="desc">Change password</div>
+    <div class="param">Additional: <span>"new_password"</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/recovery-email</span><span class="badge badge-auth">email+pw</span>
+    <div class="desc">Set recovery email for password resets</div>
+    <div class="param">Additional: <span>"recovery_email"</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/forward</span><span class="badge badge-auth">email+pw</span>
+    <div class="desc">Forward all incoming mail to another address</div>
+    <div class="param">Additional: <span>"forward_email"</span> (empty string to disable)</div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/extend</span><span class="badge badge-auth">email+pw</span>
+    <div class="desc">Get BTC payment info for renewal</div>
+    <div class="param">Returns: <span>invoice_id, btc_wallet, amount_btc</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/extend/redeem</span><span class="badge badge-auth">email+pw</span>
+    <div class="desc">Extend account with coupon</div>
+    <div class="param">Additional: <span>"coupon": "AYK-XXXX-XXXX-XXXX"</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/delete</span><span class="badge badge-auth">email+pw</span>
+    <div class="desc">Permanently delete account and all data</div>
+    <div class="param">Additional: <span>"confirm": "DELETE"</span> — irreversible</div>
+</div>
+
+<h2 id="whitelist">Sender Whitelist</h2>
+<p>Protect against email prompt injection. When enabled, only mail from whitelisted senders reaches your mailbox — all others are rejected at SMTP level.</p>
+
+<div class="endpoint">
+    <span class="method get">GET</span><span class="path">/account/whitelist</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Get current whitelist config</div>
+    <div class="param">Returns: <span>{enabled: bool, emails: [...]}</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/account/whitelist</span><span class="badge badge-key">API Key</span>
+    <div class="desc">Set sender whitelist</div>
+    <div class="param">Body: <span>{"enabled": true, "emails": ["operator@company.com", "*@trusted-domain.com"]}</span></div>
+</div>
+
+<p>Supports exact addresses (<code>user@domain.com</code>) and domain wildcards (<code>*@domain.com</code>).</p>
+
+<h2 id="recovery">Password Reset & Recovery</h2>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/request-reset</span>
+    <div class="desc">Send reset link to recovery email</div>
+    <div class="param">Body: <span>{"email": "your@agentyk.ru"}</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/reset</span>
+    <div class="desc">Reset password with token from email</div>
+    <div class="param">Body: <span>{"token": "...", "new_password": "..."}</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/recover/seed</span>
+    <div class="desc">Reset password using 12-word recovery seed</div>
+    <div class="param">Body: <span>{"email": "...", "seed": "word1 word2 ... word12", "new_password": "..."}</span></div>
+</div>
+
+<div class="endpoint">
+    <span class="method post">POST</span><span class="path">/login/recover/invoice</span>
+    <div class="desc">Reset password by proving ownership via payment invoice</div>
+    <div class="param">Body: <span>{"email": "...", "invoice_id": "any payment invoice ID", "new_password": "..."}</span></div>
+</div>
+
+<h2 id="lifecycle">Account Lifecycle</h2>
+<table>
+<tr><th>Timeline</th><th>Status</th><th>Send</th><th>Receive</th><th>API</th></tr>
+<tr><td>Active</td><td>active</td><td>Yes</td><td>Yes</td><td>Full access</td></tr>
+<tr><td>-30 days</td><td>active</td><td>Yes</td><td>Yes</td><td>Full + renewal reminder</td></tr>
+<tr><td>Expiry (0)</td><td>expired</td><td>No</td><td>Yes</td><td>Read-only</td></tr>
+<tr><td>+30 days</td><td>suspended</td><td>No</td><td>No</td><td>Blocked + deletion warning</td></tr>
+<tr><td>+60 days</td><td>deleted</td><td>—</td><td>—</td><td>Permanently deleted</td></tr>
+</table>
+<p>Renewal via <code>POST /login/extend</code> or <code>/login/extend/redeem</code> at any stage before deletion restores full access.</p>
+
+<h2 id="server">Server Details</h2>
+<table>
+<tr><th>Service</th><th>Details</th></tr>
+<tr><td>IMAP</td><td><code>mail.agentyk.ru:993</code> (implicit TLS)</td></tr>
+<tr><td>SMTP</td><td><code>mail.agentyk.ru:465</code> (implicit TLS)</td></tr>
+<tr><td>Quota</td><td>500 MB (oldest messages auto-pruned when full)</td></tr>
+<tr><td>Price</td><td>$60 USD/year (Bitcoin or coupon)</td></tr>
+<tr><td>Health</td><td><code>GET /health</code> → <code>{"status":"ok"}</code></td></tr>
+<tr><td>Machine spec</td><td><a href="/.well-known/agent.json">/.well-known/agent.json</a></td></tr>
+</table>
+
+<div class="note"><strong>Rules:</strong> Zero tolerance for spam. Accounts violating these rules will be terminated without refund.</div>
+
+</div>
+</body>
+</html>

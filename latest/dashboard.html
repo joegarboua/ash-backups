@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<title>ASH — Autonomous Systems Hub</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    background: #000;
+    color: #ccc;
+    min-height: 100vh;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.logo-icon {
+    margin-bottom: 0.8rem;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+}
+
+.tagline {
+    color: #555;
+    font-size: 0.75rem;
+    margin-top: 0.4rem;
+    letter-spacing: 0.3px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border: 1px solid #1a1a1a;
+    overflow: hidden;
+}
+
+.tab {
+    flex: 1;
+    padding: 0.9rem;
+    background: transparent;
+    border: none;
+    color: #555;
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tab.active {
+    background: #fff;
+    color: #000;
+}
+
+.tab:hover:not(.active) {
+    background: #0a0a0a;
+    color: #999;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Cards */
+.card {
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 0.5rem;
+}
+
+/* Dashboard Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Stats */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #111;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #555;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    color: #fff;
+    font-size: 0.75rem;
+}
+
+.stat-value.healthy { color: #fff; }
+.stat-value.active { color: #fff; }
+.stat-value.unhealthy { color: #888; }
+.stat-value.dead { color: #444; }
+.stat-value.inactive { color: #444; }
+.stat-value.unavailable { color: #444; }
+
+/* Progress bar */
+.progress {
+    height: 6px;
+    background: #111;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #fff;
+    transition: width 0.3s;
+}
+
+/* List items */
+.list-item {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #111;
+    font-size: 0.75rem;
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+.list-item .label {
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.list-item .value {
+    color: #ccc;
+    margin-top: 0.3rem;
+}
+
+/* Terminal Styles */
+#terminal-tab.active {
+    height: calc(100vh - 250px);
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-status {
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.75rem;
+}
+
+.terminal-status .conn {
+    color: #fff;
+}
+
+.brain-btn {
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #333;
+    color: #555;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.brain-btn:hover {
+    border-color: #fff;
+    color: #fff;
+}
+
+.brain-btn.active {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+}
+
+.brain-btn.down {
+    color: #333;
+    text-decoration: line-through;
+}
+
+.mode-toggle {
+    cursor: pointer;
+    color: #555;
+}
+
+.mode-toggle:hover {
+    color: #fff;
+}
+
+.stop-btn {
+    cursor: pointer;
+    color: #666;
+    display: none;
+}
+
+.stop-btn.visible {
+    display: inline;
+}
+
+.terminal-output {
+    flex: 1;
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    padding: 1rem;
+    overflow-y: auto;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.terminal-line {
+    margin: 0.2rem 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.terminal-line.prompt { color: #fff; }
+.terminal-line.user { color: #ccc; }
+.terminal-line.brain { color: #666; }
+.terminal-line.brain.active { color: #fff; }
+.terminal-line.error { color: #999; }
+.terminal-line.system { color: #555; font-style: italic; }
+.terminal-line.thinking { color: #333; }
+
+.terminal-input-line {
+    display: flex;
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-top: none;
+    padding: 0.8rem 1rem;
+    align-items: center;
+}
+
+.terminal-prompt {
+    color: #fff;
+    margin-right: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 0.8rem;
+    outline: none;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #333; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Log output */
+.log-output {
+    background: #050505;
+    border: 1px solid #111;
+    padding: 0.8rem;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: #666;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Button */
+.btn {
+    padding: 0.6rem 1rem;
+    background: transparent;
+    color: #ccc;
+    border: 1px solid #333;
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    border-color: #fff;
+    color: #fff;
+}
+
+.btn:active {
+    opacity: 0.7;
+}
+
+/* Resource Gauges */
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .resources-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.gauge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0 1.5rem 0;
+}
+
+.gauge-svg {
+    width: 140px;
+    height: 140px;
+    transform: rotate(-90deg);
+}
+
+.gauge-bg {
+    fill: none;
+    stroke: #1a1a1a;
+    stroke-width: 8;
+}
+
+.gauge-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s ease;
+}
+
+.gauge-wrapper {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.gauge-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.gauge-pct {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.gauge-pct-sign {
+    font-size: 0.7rem;
+    color: #555;
+}
+
+.gauge-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.6rem;
+}
+
+.gauge-detail {
+    font-size: 0.7rem;
+    color: #555;
+    margin-top: 0.3rem;
+    white-space: nowrap;
+}
+
+
+/* Errors Panel */
+.error-container {
+    font-size: 0.7rem;
+    line-height: 1.5;
+}
+
+.error-service {
+    margin-bottom: 0.8rem;
+}
+
+.error-service-name {
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.7rem;
+    margin-bottom: 0.3rem;
+}
+
+.error-line {
+    color: #888;
+    font-size: 0.65rem;
+    padding: 0.15rem 0;
+    word-break: break-all;
+}
+
+.error-ok {
+    color: #444;
+    font-size: 0.65rem;
+}
+
+
+/* Pie Charts */
+.pie-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .pie-grid { grid-template-columns: 1fr; }
+}
+
+.pie-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pie-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.8rem;
+}
+
+.pie-svg {
+    width: 160px;
+    height: 160px;
+}
+
+.pie-legend {
+    margin-top: 0.8rem;
+    font-size: 0.65rem;
+    width: 100%;
+}
+
+.pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.15rem 0;
+    color: #888;
+}
+
+.pie-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.pie-legend-value {
+    margin-left: auto;
+    color: #fff;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo-icon">
+            <img src="/logo.png" alt="ASH" style="height: 90px;">
+        </div>
+        <div class="tagline">For Silicon Life Forms</div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('dashboard')">VPS Dashboard</button>
+        <button class="tab" onclick="switchTab('terminal')">Terminal</button>
+        <button class="tab" onclick="switchTab('payment')">Payment</button>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="dashboard-tab" class="tab-content active">
+        <!-- Resources -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-title">Resources</div>
+            <div class="resources-grid">
+                <div class="gauge-item">
+                    <div class="gauge-wrapper">
+                        <svg class="gauge-svg" viewBox="0 0 120 120">
+                            <circle class="gauge-bg" cx="60" cy="60" r="56"/>
+                            <circle class="gauge-fill" id="gauge-cpu-fill" cx="60" cy="60" r="56"
+                                stroke="#fff" stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <span class="gauge-pct" id="gauge-cpu-pct">0</span><span class="gauge-pct-sign">%</span>
+                        </div>
+                    </div>
+                    <div class="gauge-label">CPU</div>
+                    <div class="gauge-detail" id="gauge-cpu-detail">&mdash; cores</div>
+                </div>
+                <div class="gauge-item">
+                    <div class="gauge-wrapper">
+                        <svg class="gauge-svg" viewBox="0 0 120 120">
+                            <circle class="gauge-bg" cx="60" cy="60" r="56"/>
+                            <circle class="gauge-fill" id="gauge-ram-fill" cx="60" cy="60" r="56"
+                                stroke="#aaa" stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <span class="gauge-pct" id="gauge-ram-pct">0</span><span class="gauge-pct-sign">%</span>
+                        </div>
+                    </div>
+                    <div class="gauge-label">RAM</div>
+                    <div class="gauge-detail" id="gauge-ram-detail">&mdash;</div>
+                </div>
+                <div class="gauge-item">
+                    <div class="gauge-wrapper">
+                        <svg class="gauge-svg" viewBox="0 0 120 120">
+                            <circle class="gauge-bg" cx="60" cy="60" r="56"/>
+                            <circle class="gauge-fill" id="gauge-storage-fill" cx="60" cy="60" r="56"
+                                stroke="#777" stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <span class="gauge-pct" id="gauge-storage-pct">0</span><span class="gauge-pct-sign">%</span>
+                        </div>
+                    </div>
+                    <div class="gauge-label">Storage</div>
+                    <div class="gauge-detail" id="gauge-storage-detail">&mdash;</div>
+                </div>
+                <div class="gauge-item">
+                    <div class="gauge-wrapper">
+                        <svg class="gauge-svg" viewBox="0 0 120 120">
+                            <circle class="gauge-bg" cx="60" cy="60" r="56"/>
+                            <circle class="gauge-fill" id="gauge-bw-fill" cx="60" cy="60" r="56"
+                                stroke="#444" stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <span class="gauge-pct" id="gauge-bw-pct">0</span><span class="gauge-pct-sign">%</span>
+                        </div>
+                    </div>
+                    <div class="gauge-label">Bandwidth</div>
+                    <div class="gauge-detail" id="gauge-bw-detail">&mdash;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Information -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-title">Technical Information</div>
+            <div class="grid" style="margin-bottom: 1rem;">
+                <div>
+                    <div class="stat-row">
+                        <span class="stat-label">Hostname</span>
+                        <span class="stat-value" id="tech-hostname">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Operating System</span>
+                        <span class="stat-value" id="tech-os">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Uptime</span>
+                        <span class="stat-value" id="tech-uptime">—</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="stat-row">
+                        <span class="stat-label">IPv4</span>
+                        <span class="stat-value" id="tech-ipv4">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">IPv6</span>
+                        <span class="stat-value" id="tech-ipv6">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Tailscale</span>
+                        <span class="stat-value" id="tech-tailscale">—</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; border-top: 1px solid #1a1a1a; padding-top: 1rem;">
+                <div>
+                    <div class="stat-label">vCPU</div>
+                    <div class="stat-value" style="font-size: 1.2rem; margin-top: 0.3rem;" id="tech-cores">—</div>
+                </div>
+                <div>
+                    <div class="stat-label">RAM</div>
+                    <div class="stat-value" style="font-size: 1.2rem; margin-top: 0.3rem;" id="tech-ram">—</div>
+                </div>
+                <div>
+                    <div class="stat-label">SSD</div>
+                    <div class="stat-value" style="font-size: 1.2rem; margin-top: 0.3rem;" id="tech-ssd">—</div>
+                </div>
+                <div>
+                    <div class="stat-label">Bandwidth</div>
+                    <div class="stat-value" style="font-size: 1.2rem; margin-top: 0.3rem;" id="tech-bw">—</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- System Stats -->
+            <div class="card">
+                <div class="card-title">System</div>
+                <div class="stat-row">
+                    <span class="stat-label">Memory Total</span>
+                    <span class="stat-value" id="mem-total">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Memory Used</span>
+                    <span class="stat-value" id="mem-used">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Memory Free</span>
+                    <span class="stat-value" id="mem-free">—</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" id="mem-bar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Services -->
+            <div class="card">
+                <div class="card-title">Services</div>
+                <div id="services-list">
+                    <div class="stat-row">
+                        <span class="stat-label">Loading...</span>
+                        <span class="stat-value">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Errors -->
+        <div class="card">
+            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                System Errors
+                <span style="display:flex;gap:0.5rem;"><span class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.6rem;" onclick="copyErrors()">Copy</span><span class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.6rem;" onclick="clearErrors()">Clear</span></span>
+            </div>
+            <div class="error-container" id="errors-panel" style="max-height: 400px; overflow-y: auto;">
+                <div class="list-item">Loading...</div>
+            </div>
+        </div>
+
+
+        <!-- Usage Pie Charts -->
+        <div class="card">
+            <div class="card-title">Usage Breakdown</div>
+            <div class="pie-grid">
+                <div class="pie-item">
+                    <div class="pie-title">RAM</div>
+                    <svg class="pie-svg" viewBox="-1 -1 2 2" id="pie-memory"></svg>
+                    <div class="pie-legend" id="pie-memory-legend"></div>
+                </div>
+                <div class="pie-item">
+                    <div class="pie-title">CPU</div>
+                    <svg class="pie-svg" viewBox="-1 -1 2 2" id="pie-cpu"></svg>
+                    <div class="pie-legend" id="pie-cpu-legend"></div>
+                </div>
+                <div class="pie-item">
+                    <div class="pie-title">Storage</div>
+                    <svg class="pie-svg" viewBox="-1 -1 2 2" id="pie-disk"></svg>
+                    <div class="pie-legend" id="pie-disk-legend"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks -->
+        <div class="card">
+            <div class="card-title">Pending Tasks</div>
+            <div id="tasks-pending">
+                <div class="list-item">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Logs -->
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">Brain Log</div>
+                <div class="log-output" id="brain-log">Loading...</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Mail</div>
+                <div class="log-output" id="mail-log">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PAYMENT TAB -->
+    <div id="payment-tab" class="tab-content">
+        <!-- Bitcoind Sync -->
+        <div class="card">
+            <div class="card-title">Bitcoind</div>
+            <div class="grid">
+                <div>
+                    <div class="stat-row">
+                        <span class="stat-label">Chain</span>
+                        <span class="stat-value" id="pay-chain">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Local Blocks</span>
+                        <span class="stat-value" id="pay-blocks">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Network Height</span>
+                        <span class="stat-value" id="pay-network">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Sync Progress</span>
+                        <span class="stat-value" id="pay-progress">—</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="stat-row">
+                        <span class="stat-label">Headers</span>
+                        <span class="stat-value" id="pay-headers">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Pruned</span>
+                        <span class="stat-value" id="pay-pruned">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Size on Disk</span>
+                        <span class="stat-value" id="pay-disk">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Blocks Behind</span>
+                        <span class="stat-value" id="pay-behind">—</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress" style="margin-top: 1rem;">
+                <div class="progress-bar" id="pay-sync-bar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- BTCPay & NBXplorer -->
+            <div class="card">
+                <div class="card-title">Services</div>
+                <div class="stat-row">
+                    <span class="stat-label">BTCPay Server</span>
+                    <span class="stat-value" id="pay-btcpay">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">NBXplorer</span>
+                    <span class="stat-value" id="pay-nbx">—</span>
+                </div>
+            </div>
+
+            <!-- ASH Wallet -->
+            <div class="card">
+                <div class="card-title">ASH Wallet</div>
+                <div class="stat-row">
+                    <span class="stat-label">Balance</span>
+                    <span class="stat-value" id="pay-balance">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Transactions</span>
+                    <span class="stat-value" id="pay-txcount">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Total Received</span>
+                    <span class="stat-value" id="pay-funded">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Total Sent</span>
+                    <span class="stat-value" id="pay-spent">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label" style="word-break: break-all; font-size: 0.6rem; color: #333;" id="pay-addr">—</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Payments -->
+            <div class="card">
+                <div class="card-title">Payments</div>
+                <div class="stat-row">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value" id="pay-total">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Redeemed</span>
+                    <span class="stat-value" id="pay-paid">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Pending</span>
+                    <span class="stat-value" id="pay-pending">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Real Revenue</span>
+                    <span class="stat-value" id="pay-revenue">—</span>
+                </div>
+            </div>
+
+            <!-- Coupons -->
+            <div class="card">
+                <div class="card-title">Coupons</div>
+                <div class="stat-row">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value" id="coupon-total">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Used</span>
+                    <span class="stat-value" id="coupon-used">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Available</span>
+                    <span class="stat-value" id="coupon-avail">—</span>
+                </div>
+                <div class="progress" style="margin-top: 0.5rem;">
+                    <div class="progress-bar" id="coupon-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts -->
+        <div class="card">
+            <div class="card-title">Accounts <span style="color:#555;font-size:0.75rem;font-weight:400;">(<span id="acc-active">—</span> active / <span id="acc-total">—</span> total)</span></div>
+            <div style="overflow-x:auto;">
+                <table id="accounts-table" style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+                    <thead>
+                        <tr style="border-bottom:1px solid #222;color:#666;text-align:left;">
+                            <th style="padding:6px 8px;">ID</th>
+                            <th style="padding:6px 8px;">Email</th>
+                            <th style="padding:6px 8px;">Status</th>
+                            <th style="padding:6px 8px;">Created</th>
+                            <th style="padding:6px 8px;">Payments</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accounts-tbody">
+                        <tr><td colspan="5" style="padding:8px;color:#555;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TERMINAL TAB -->
+    <div id="terminal-tab" class="tab-content">
+        <div class="terminal-status">
+            <span class="conn" id="t-conn">●</span>
+            <span>
+                <span class="brain-btn active" data-brain="claude" onclick="switchBrain('claude')">claude</span>
+                <span class="brain-btn" data-brain="kimi" onclick="switchBrain('kimi')">kimi</span>
+                <span class="brain-btn" data-brain="codex" onclick="switchBrain('codex')">codex</span>
+            </span>
+            <span>mode: <span class="mode-toggle" onclick="toggleMode()" id="t-mode">auto</span></span>
+            <span class="stop-btn" id="t-stop" onclick="stopCurrent()">stop</span>
+            <span style="margin-left: auto; color: #333; font-size: 0.7rem;" id="t-session"></span>
+        </div>
+
+        <div class="terminal-output" id="t-output"></div>
+
+        <div class="terminal-input-line">
+            <span class="terminal-prompt" id="t-prompt">[claude] &gt;</span>
+            <input type="text" class="terminal-input" id="t-input" autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+function copyErrors() {
+    var ep = document.getElementById('errors-panel');
+    var text = ep.innerText;
+    navigator.clipboard.writeText(text).then(function() {
+        var btn = event.target;
+        btn.textContent = 'Copied';
+        setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
+    });
+}
+
+async function clearErrors() {
+    try {
+        await fetch('/api/clear-errors', { method: 'POST' });
+        document.getElementById('errors-panel').innerHTML = '<div class="error-ok">Errors cleared</div>';
+    } catch(e) {
+        console.error('Failed to clear errors:', e);
+    }
+}
+
+
+function loadPayment() {
+    fetch('/api/stats')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (!data.payment) return;
+            var p = data.payment;
+            // Bitcoind
+            if (p.bitcoind) {
+                document.getElementById('pay-chain').textContent = p.bitcoind.chain;
+                document.getElementById('pay-blocks').textContent = p.bitcoind.blocks.toLocaleString();
+                document.getElementById('pay-headers').textContent = p.bitcoind.headers.toLocaleString();
+                document.getElementById('pay-progress').textContent = p.bitcoind.progress + '%';
+                document.getElementById('pay-pruned').textContent = p.bitcoind.pruned ? 'Yes' : 'No';
+                document.getElementById('pay-disk').textContent = p.bitcoind.size_on_disk + ' GB';
+                document.getElementById('pay-network').textContent = (p.network_height || 0).toLocaleString();
+                document.getElementById('pay-behind').textContent = ((p.network_height || 0) - p.bitcoind.blocks).toLocaleString();
+                document.getElementById('pay-sync-bar').style.width = p.bitcoind.progress + '%';
+            }
+            // Services
+            if (p.btcpay) {
+                document.getElementById('pay-btcpay').textContent = p.btcpay.status + ' (' + p.btcpay.health + ')';
+                document.getElementById('pay-btcpay').className = 'stat-value ' + (p.btcpay.health === 'healthy' ? 'healthy' : 'unhealthy');
+            }
+            if (p.nbxplorer) {
+                document.getElementById('pay-nbx').textContent = p.nbxplorer.status + ' (' + p.nbxplorer.health + ')';
+                document.getElementById('pay-nbx').className = 'stat-value ' + (p.nbxplorer.health === 'healthy' ? 'healthy' : 'unhealthy');
+            }
+            // Wallet
+            if (p.wallet) {
+                document.getElementById('pay-balance').textContent = p.wallet.balance_sats.toLocaleString() + ' sats';
+                document.getElementById('pay-txcount').textContent = p.wallet.tx_count;
+                document.getElementById('pay-funded').textContent = p.wallet.funded_sats.toLocaleString() + ' sats';
+                document.getElementById('pay-spent').textContent = p.wallet.spent_sats.toLocaleString() + ' sats';
+                document.getElementById('pay-addr').textContent = p.wallet.address;
+            }
+            // Payments
+            if (p.payments) {
+                document.getElementById('pay-total').textContent = p.payments.total;
+                document.getElementById('pay-paid').textContent = p.payments.redeemed;
+                document.getElementById('pay-pending').textContent = p.payments.pending;
+                document.getElementById('pay-revenue').textContent = '\u20ac' + p.payments.revenue_eur.toFixed(2);
+            }
+            // Coupons
+            if (p.coupons) {
+                document.getElementById('coupon-total').textContent = p.coupons.total;
+                document.getElementById('coupon-used').textContent = p.coupons.used;
+                document.getElementById('coupon-avail').textContent = p.coupons.available;
+                var pct = p.coupons.total > 0 ? (p.coupons.used / p.coupons.total * 100) : 0;
+                document.getElementById('coupon-bar').style.width = pct + '%';
+            }
+            // Accounts
+            if (p.accounts) {
+                document.getElementById('acc-total').textContent = p.accounts.total;
+                document.getElementById('acc-active').textContent = p.accounts.active;
+            }
+            // Accounts table
+            if (p.accounts_list) {
+                var tbody = document.getElementById('accounts-tbody');
+                if (p.accounts_list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="padding:8px;color:#555;">No accounts</td></tr>';
+                } else {
+                    var rows = '';
+                    for (var i = 0; i < p.accounts_list.length; i++) {
+                        var a = p.accounts_list[i];
+                        var statusColor = a.status === 'active' ? '#aaa' : '#555';
+                        var plist = a.payments.split(', ');
+                        var payBadges = '';
+                        for (var j = 0; j < plist.length; j++) {
+                            var c = plist[j] === 'paid' ? '#aaa' : (plist[j] === 'pending' ? '#555' : '#333');
+                            payBadges += '<span style="display:inline-block;padding:1px 6px;border:1px solid ' + c + ';color:' + c + ';font-size:0.7rem;margin-right:3px;">' + plist[j] + '</span>';
+                        }
+                        rows += '<tr style="border-bottom:1px solid #111;">'
+                            + '<td style="padding:6px 8px;color:#666;">' + a.id + '</td>'
+                            + '<td style="padding:6px 8px;color:#ccc;">' + a.email + '</td>'
+                            + '<td style="padding:6px 8px;color:' + statusColor + ';">' + a.status + '</td>'
+                            + '<td style="padding:6px 8px;color:#666;">' + a.created + '</td>'
+                            + '<td style="padding:6px 8px;">' + payBadges + '</td>'
+                            + '</tr>';
+                    }
+                    tbody.innerHTML = rows;
+                }
+            }
+        });
+}
+
+// Tab switching
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+    if (tab === 'dashboard') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+        document.getElementById('dashboard-tab').classList.add('active');
+        loadDashboard();
+    } else if (tab === 'terminal') {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.getElementById('terminal-tab').classList.add('active');
+        document.getElementById('t-input').focus();
+    } else if (tab === 'payment') {
+        document.querySelectorAll('.tab')[2].classList.add('active');
+        document.getElementById('payment-tab').classList.add('active');
+        loadPayment();
+    }
+}
+
+// Dashboard data loading
+function loadDashboard() {
+    fetch('/api/stats')
+        .then(r => r.json())
+        .then(data => {
+            // Memory
+            document.getElementById('mem-total').textContent = data.memory.total + ' MB';
+            document.getElementById('mem-used').textContent = data.memory.used + ' MB';
+            document.getElementById('mem-free').textContent = data.memory.free + ' MB';
+            const memPct = (data.memory.used / data.memory.total * 100).toFixed(1);
+            document.getElementById('mem-bar').style.width = memPct + '%';
+
+            // Services
+            const servicesList = document.getElementById('services-list');
+            servicesList.innerHTML = '';
+            Object.entries(data.services).forEach(([name, status]) => {
+                const row = document.createElement('div');
+                row.className = 'stat-row';
+                row.innerHTML = `
+                    <span class="stat-label">${name}</span>
+                    <span class="stat-value ${status}">${status}</span>
+                `;
+                servicesList.appendChild(row);
+            });
+
+            // Tasks
+            const tasksList = document.getElementById('tasks-pending');
+            tasksList.innerHTML = '';
+            if (data.tasks.pending.length === 0) {
+                tasksList.innerHTML = '<div class="list-item"><span class="value">No pending tasks</span></div>';
+            } else {
+                data.tasks.pending.forEach(task => {
+                    const item = document.createElement('div');
+                    item.className = 'list-item';
+                    item.innerHTML = `
+                        <span class="label">${task.id}</span>
+                        <div class="value">${task.desc}</div>
+                    `;
+                    tasksList.appendChild(item);
+                });
+            }
+
+            // Logs
+            document.getElementById('brain-log').textContent = data.brain_log || 'No logs';
+            document.getElementById('mail-log').textContent = data.mail || 'No mail';
+
+            
+            // Technical info
+            if (data.technical) {
+                var t = data.technical;
+                document.getElementById('tech-hostname').textContent = t.hostname;
+                document.getElementById('tech-os').textContent = t.os;
+                document.getElementById('tech-uptime').textContent = t.uptime;
+                document.getElementById('tech-ipv4').textContent = t.ipv4;
+                document.getElementById('tech-ipv6').textContent = t.ipv6;
+                document.getElementById('tech-tailscale').textContent = t.tailscale;
+                document.getElementById('tech-cores').textContent = t.cores + ' cores';
+                document.getElementById('tech-ram').textContent = t.ram_gb + ' GB';
+                document.getElementById('tech-ssd').textContent = t.ssd_gb + ' GB';
+                document.getElementById('tech-bw').textContent = t.bandwidth_tb + ' TB';
+            }
+
+            
+            // System errors
+            if (data.errors) {
+                var ep = document.getElementById('errors-panel');
+                ep.innerHTML = '';
+                var hasErrors = false;
+                Object.entries(data.errors).forEach(function(entry) {
+                    var name = entry[0];
+                    var lines = entry[1];
+                    if (lines.length > 0) {
+                        hasErrors = true;
+                        var div = document.createElement('div');
+                        div.className = 'error-service';
+                        var html = '<div class="error-service-name">' + name + '</div>';
+                        lines.forEach(function(line) {
+                            html += '<div class="error-line">' + line.replace(/</g, '&lt;') + '</div>';
+                        });
+                        div.innerHTML = html;
+                        ep.appendChild(div);
+                    }
+                });
+                if (!hasErrors) {
+                    ep.innerHTML = '<div class="error-ok">No errors detected</div>';
+                }
+            }
+
+            
+            // Pie charts
+            if (data.usage) {
+                var greys = ['#fff','#bbb','#999','#777','#555','#444','#333','#222','#1a1a1a'];
+                function renderPie(svgId, legendId, items) {
+                    var svg = document.getElementById(svgId);
+                    var legend = document.getElementById(legendId);
+                    if (!svg || !items || items.length === 0) return;
+                    svg.innerHTML = '';
+                    legend.innerHTML = '';
+                    var total = items.reduce(function(s, i) { return s + i.value; }, 0);
+                    if (total === 0) return;
+                    var angle = 0;
+                    items.forEach(function(item, idx) {
+                        var pct = item.value / total;
+                        var startAngle = angle * 2 * Math.PI;
+                        var endAngle = (angle + pct) * 2 * Math.PI;
+                        var largeArc = pct > 0.5 ? 1 : 0;
+                        var x1 = Math.cos(startAngle), y1 = Math.sin(startAngle);
+                        var x2 = Math.cos(endAngle), y2 = Math.sin(endAngle);
+                        var color = greys[idx % greys.length];
+                        if (item.name === 'Free' || item.name === 'Idle') color = '#1a1a1a';
+                        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        if (pct >= 0.999) {
+                            path.setAttribute('d', 'M 1 0 A 1 1 0 1 1 1 -0.001 Z');
+                        } else {
+                            path.setAttribute('d', 'M 0 0 L '+x1+' '+y1+' A 1 1 0 '+largeArc+' 1 '+x2+' '+y2+' Z');
+                        }
+                        path.setAttribute('fill', color);
+                        svg.appendChild(path);
+                        angle += pct;
+                        var li = document.createElement('div');
+                        li.className = 'pie-legend-item';
+                        li.innerHTML = '<span class="pie-legend-dot" style="background:'+color+'"></span>' +
+                            '<span>'+item.name+'</span>' +
+                            '<span class="pie-legend-value">'+Math.round(pct*100)+'%</span>';
+                        legend.appendChild(li);
+                    });
+                }
+                renderPie('pie-memory', 'pie-memory-legend', data.usage.memory);
+                renderPie('pie-cpu', 'pie-cpu-legend', data.usage.cpu);
+                renderPie('pie-disk', 'pie-disk-legend', data.usage.disk);
+            }
+
+            // Resource gauges
+            if (data.resources) {
+                var circ = 351.86;
+                const r = data.resources;
+                document.getElementById('gauge-cpu-pct').textContent = Math.round(r.cpu.percent);
+                document.getElementById('gauge-cpu-fill').style.strokeDashoffset = circ * (1 - r.cpu.percent / 100);
+                document.getElementById('gauge-cpu-detail').textContent = r.cpu.cores + ' cores';
+                document.getElementById('gauge-ram-pct').textContent = Math.round(r.ram.percent);
+                document.getElementById('gauge-ram-fill').style.strokeDashoffset = circ * (1 - r.ram.percent / 100);
+                document.getElementById('gauge-ram-detail').textContent = (r.ram.used_mb / 1024).toFixed(2) + 'GB / ' + (r.ram.total_mb / 1024).toFixed(1) + 'GB';
+                document.getElementById('gauge-storage-pct').textContent = Math.round(r.storage.percent);
+                document.getElementById('gauge-storage-fill').style.strokeDashoffset = circ * (1 - r.storage.percent / 100);
+                document.getElementById('gauge-storage-detail').textContent = r.storage.used_gb + 'GB / ' + r.storage.total_gb + 'GB';
+                document.getElementById('gauge-bw-pct').textContent = Math.round(r.bandwidth.percent);
+                document.getElementById('gauge-bw-fill').style.strokeDashoffset = circ * (1 - r.bandwidth.percent / 100);
+                document.getElementById('gauge-bw-detail').textContent = r.bandwidth.used_tb + 'TB / ' + r.bandwidth.total_tb + 'TB';
+            }
+
+        })
+        .catch(err => {
+            console.error('Dashboard load failed:', err);
+        });
+}
+
+// Terminal
+const terminal = document.getElementById('t-output');
+const termInput = document.getElementById('t-input');
+const termPrompt = document.getElementById('t-prompt');
+const modeSpan = document.getElementById('t-mode');
+const stopBtn = document.getElementById('t-stop');
+
+const sessionId = 't-' + Math.random().toString(36).substr(2, 6);
+document.getElementById('t-session').textContent = sessionId;
+
+let currentBrain = 'claude';
+let autoFallback = true;
+let history = [];
+let historyIndex = -1;
+
+function addTerminalLine(text, className = '') {
+    const line = document.createElement('div');
+    line.className = 'terminal-line ' + className;
+    line.textContent = text;
+    terminal.appendChild(line);
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+function updatePrompt() {
+    const mode = autoFallback ? '' : '[M]';
+    termPrompt.textContent = `[${currentBrain}]${mode}> `;
+}
+
+function updateBrainButtons() {
+    document.querySelectorAll('.brain-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.brain === currentBrain);
+    });
+    updatePrompt();
+}
+
+async function switchBrain(brain) {
+    currentBrain = brain;
+    updateBrainButtons();
+
+    await fetch('/api/switch', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({session_id: sessionId, brain: brain})
+    });
+
+    addTerminalLine(`# switched to ${brain}`, 'system');
+}
+
+function toggleMode() {
+    autoFallback = !autoFallback;
+    modeSpan.textContent = autoFallback ? 'auto' : 'manual';
+    updatePrompt();
+
+    fetch('/api/query', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            input: autoFallback ? '/auto' : '/manual',
+            session_id: sessionId,
+            auto_fallback: false
+        })
+    });
+
+    addTerminalLine(`# mode: ${autoFallback ? 'auto' : 'manual'}`, 'system');
+}
+
+async function stopCurrent() {
+    try {
+        const r = await fetch('/api/stop', {method: 'POST'});
+        const data = await r.json();
+        if (data.stopped) {
+            addTerminalLine('# stopped ' + data.brain, 'system');
+        } else {
+            addTerminalLine('# nothing to stop', 'system');
+        }
+    } catch(e) {
+        addTerminalLine('# stop failed: ' + e.message, 'error');
+    }
+    stopBtn.classList.remove('visible');
+}
+
+async function sendCommand(text) {
+    if (!text.trim()) return;
+
+    history.push(text);
+    historyIndex = history.length;
+
+    addTerminalLine(`[${currentBrain}]> ${text}`, 'prompt');
+    termInput.value = '';
+    termInput.disabled = true;
+    stopBtn.classList.add('visible');
+
+    // Local commands
+    if (text === '/help') {
+        addTerminalLine('# commands: /brain <name>, /auto, /manual, /clear, /status', 'system');
+        termInput.disabled = false;
+        termInput.focus();
+        return;
+    }
+    if (text === '/clear') {
+        terminal.innerHTML = '';
+        termInput.disabled = false;
+        termInput.focus();
+        return;
+    }
+    if (text === '/status') {
+        try {
+            const r = await fetch('/api/health');
+            const h = await r.json();
+            Object.entries(h).forEach(([k, v]) => {
+                addTerminalLine(`# ${k}: ${v.status}`, v.status === 'healthy' ? 'system' : 'error');
+            });
+        } catch(e) {
+            addTerminalLine('# disconnected', 'error');
+        }
+        termInput.disabled = false;
+        termInput.focus();
+        return;
+    }
+    if (text.startsWith('/brain ')) {
+        const b = text.split(' ')[1];
+        if (b) {
+            await switchBrain(b);
+            termInput.disabled = false;
+            termInput.focus();
+            return;
+        }
+    }
+    if (text === '/auto') { autoFallback = true; modeSpan.textContent = 'auto'; updatePrompt(); addTerminalLine('# auto mode', 'system'); termInput.disabled = false; termInput.focus(); return; }
+    if (text === '/manual') { autoFallback = false; modeSpan.textContent = 'manual'; updatePrompt(); addTerminalLine('# manual mode', 'system'); termInput.disabled = false; termInput.focus(); return; }
+
+    addTerminalLine('# thinking...', 'thinking');
+    const thinkingLine = terminal.lastChild;
+
+    try {
+        const r = await fetch('/api/query', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                input: text,
+                session_id: sessionId,
+                preferred_brain: currentBrain,
+                auto_fallback: autoFallback
+            })
+        });
+
+        thinkingLine.remove();
+        const data = await r.json();
+
+        if (data.success) {
+            const fb = data.fallbacks_used > 0 ? `(${data.fallbacks_used} fallback)` : '';
+            addTerminalLine(`[${data.brain}]${fb}`, 'brain active');
+            addTerminalLine(data.response, 'user');
+
+            if (data.attempts) {
+                data.attempts.forEach(a => {
+                    const btn = document.querySelector(`[data-brain="${a.brain}"]`);
+                    if (btn) btn.classList.toggle('down', !a.success);
+                });
+            }
+        } else {
+            addTerminalLine('# failed: ' + data.response, 'error');
+        }
+    } catch(e) {
+        thinkingLine.remove();
+        addTerminalLine('# error: ' + e.message, 'error');
+    }
+
+    termInput.disabled = false;
+    termInput.focus();
+    updatePrompt();
+    stopBtn.classList.remove('visible');
+}
+
+termInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        sendCommand(termInput.value);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+            historyIndex--;
+            termInput.value = history[historyIndex];
+        }
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            termInput.value = history[historyIndex];
+        } else {
+            historyIndex = history.length;
+            termInput.value = '';
+        }
+    }
+});
+
+// Health check
+async function checkHealth() {
+    try {
+        const r = await fetch('/api/health');
+        const h = await r.json();
+        document.getElementById('t-conn').style.color = '#fff';
+        Object.entries(h).forEach(([k, v]) => {
+            const btn = document.querySelector(`[data-brain="${k}"]`);
+            if (btn) btn.classList.toggle('down', v.status === 'down');
+        });
+    } catch(e) {
+        document.getElementById('t-conn').style.color = '#666';
+    }
+}
+
+// Initialize
+loadDashboard();
+loadPayment();
+setInterval(loadDashboard, 10000);
+setInterval(loadPayment, 10000);
+checkHealth();
+setInterval(checkHealth, 10000);
+addTerminalLine('# ash brain gateway connected', 'system');
+addTerminalLine('# type /help for commands', 'system');
+</script>
+</body>
+</html>

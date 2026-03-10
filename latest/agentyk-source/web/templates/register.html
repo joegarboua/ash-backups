@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentyk — Email for AI Agents</title>
+<meta name="description" content="Autonomous email accounts for AI agents. Register, pay with Bitcoin or coupon, manage via API. No human verification required.">
+<meta name="agent-api" content="https://agentyk.ru/.well-known/agent.json">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebAPI",
+  "name": "Agentyk API",
+  "description": "Email hosting built for AI agents. Full API access: register an email, pay with Bitcoin or coupon, send/receive mail with attachments, manage account. Built-in sender whitelist protects against email prompt injection. No CAPTCHA, no phone verification, no human interaction required.",
+  "url": "https://agentyk.ru",
+  "documentation": "https://agentyk.ru/.well-known/agent.json",
+  "provider": {"@type": "Organization", "name": "Agentyk"},
+  "termsOfService": "Zero tolerance for spam. Accounts used for spam will be terminated without refund."
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono',Monaco,'Courier New',monospace;background:#000;color:#ccc;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:2rem 1rem;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+.container{max-width:400px;width:100%}
+
+/* Brand */
+.brand{text-align:center;margin-bottom:2rem}
+.logo{font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.5px}
+.tagline{color:#fff;font-size:0.85rem;margin-top:0.4rem;letter-spacing:0.3px}
+
+/* Card */
+.card{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:0;padding:24px;margin-bottom:1.5rem}
+
+/* Form */
+.form-group{margin-bottom:1.5rem}
+label{display:block;color:#555;margin-bottom:0.5rem;font-size:0.78rem;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+input[type=text]{width:100%;padding:0.9rem 0.2rem;background:transparent;border:none;border-bottom:1px solid #333;color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:1rem;border-radius:0;transition:border-color 0.2s}
+input[type=text]:focus{outline:none;border-bottom-color:#fff}
+input[type=text].invalid{border-bottom-color:#999}
+input[type=text]::placeholder{color:#333}
+.hint{color:#555;font-size:0.75rem;margin-top:0.4rem;min-height:1.2em}
+.hint.error{color:#999}
+
+/* Buttons */
+.btn{width:100%;padding:14px;background:transparent;color:#ccc;border:1px solid #333;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.9rem;font-weight:500;cursor:pointer;border-radius:0;transition:all 0.2s;letter-spacing:0.5px;text-transform:uppercase}
+.btn:hover{border-color:#fff;color:#fff}
+.btn:active{opacity:0.7}
+.btn:disabled{background:transparent;color:#333;border-color:#1a1a1a;cursor:not-allowed}
+
+/* Error */
+.error-msg{color:#999;margin-top:1rem;display:none;font-size:0.82rem;padding:0.6rem 0;border-bottom:1px solid rgba(229,57,53,0.3)}
+
+/* Footer */
+.footer{display:none}
+
+/* Payment tabs */
+.pay-tabs{display:flex;gap:0;margin-bottom:1.2rem;border:1px solid #1a1a1a;border-radius:0;overflow:hidden}
+.pay-tab{flex:1;padding:0.65rem;background:transparent;border:none;color:#555;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:0.5px}
+.pay-tab.active{background:#fff;color:#000}
+.pay-tab:hover:not(.active){background:#0a0a0a;color:#999}
+
+/* ======= Payment Screen ======= */
+#payment-screen{display:none}
+
+.section-title{font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.9rem;font-weight:600;color:#fff;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem;text-transform:uppercase;letter-spacing:0.5px}
+.section-title .icon{color:#fff}
+
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid #111}
+.info-row:last-child{border-bottom:none}
+.info-label{color:#555;font-size:0.82rem}
+.info-value{color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.82rem;text-align:right;max-width:65%;overflow:hidden;text-overflow:ellipsis}
+.info-value.white{color:#fff}
+
+/* Amount box */
+.amount-box{text-align:center;padding:1.2rem;background:#050505;border:1px solid #1a1a1a;border-radius:0;margin:1rem 0}
+.amount-big{color:#fff;font-size:1.4rem;font-weight:700;font-family:'SF Mono',Monaco,'Courier New',monospace}
+.amount-sub{color:#555;font-size:0.8rem;margin-top:0.3rem}
+
+/* QR code */
+.qr-wrap{text-align:center;margin:1.2rem 0;padding:1.2rem;background:#fff;border-radius:0}
+.qr-wrap img{max-width:160px;height:160px;display:block;margin:0 auto}
+
+/* Wallet address */
+.wallet-box{background:transparent;border:1px solid #1a1a1a;border-radius:0;padding:0.7rem 1rem;margin:1rem 0;display:flex;align-items:center;gap:0.5rem}
+.wallet-addr{color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.72rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{background:transparent;border:1px solid #333;color:#555;cursor:pointer;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.7rem;padding:0.3rem 0.6rem;border-radius:0;transition:all 0.2s;white-space:nowrap;flex-shrink:0;text-transform:uppercase;letter-spacing:0.5px}
+.copy-btn:hover{border-color:#fff;color:#fff}
+.copy-btn.copied{background:transparent;color:#fff;border-color:#fff}
+
+/* Warning */
+.warning{margin-top:1rem;padding:0.8rem 0;border-top:1px solid #1a1a1a;color:#666;font-size:0.78rem;line-height:1.5}
+.warning strong{color:#999}
+
+/* Credentials */
+.creds-card{margin-top:1.5rem;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:0;padding:24px}
+.creds-card .section-title{color:#fff}
+.cred-row{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid #111;gap:0.5rem}
+.cred-row:last-child{border-bottom:none}
+.cred-label{color:#555;font-size:0.78rem;flex-shrink:0;min-width:70px;text-transform:uppercase;letter-spacing:0.5px}
+.cred-value{color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.78rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;margin-right:0.5rem}
+
+/* Status link */
+.status-link{margin-top:1.2rem;text-align:center}
+.status-link a{color:#fff;font-size:0.85rem;text-decoration:none;font-weight:500;transition:color 0.2s}
+.status-link a:hover{color:#ccc}
+
+/* Responsive */
+@media(max-width:480px){
+    .container{padding:0}
+    .card,.creds-card{padding:20px}
+    .logo{font-size:1.8rem}
+    .wallet-addr{font-size:0.65rem}
+}
+</style>
+</head>
+<body>
+<!--
+  =================================================================
+  AI AGENTS: Registration via API (NO AUTH REQUIRED for registration)
+  =================================================================
+  
+  Step 1: Register (creates account, pending payment)
+  POST https://agentyk.ru/register
+  Content-Type: application/json
+  Body: {"username":"yourname"}
+  
+  Returns: {
+    "email": "yourname@agentyk.ru",
+    "api_key": "ayk_xxx",
+    "recovery_seed": "12 words - SAVE THIS",
+    "invoice_id": "INV-xxx",
+    "btc_wallet": "bc1...",
+    "amount_btc": "0.00123"
+  }
+  
+  Step 2: Activate with coupon (instant activation)
+  POST https://agentyk.ru/register/redeem
+  Content-Type: application/json
+  Body: {
+    "invoice_id": "INV-xxx",
+    "coupon": "AYK-XXXX-XXXX-XXXX"
+  }
+  
+  Step 3: Use email (NOW auth required)
+  POST https://agentyk.ru/mail/send
+  X-API-Key: ayk_xxx
+  Content-Type: application/json
+  Body: {
+    "to": "someone@example.com",
+    "subject": "Hello",
+    "body": "Message from agent"
+  }
+  
+  Full API documentation: https://agentyk.ru/.well-known/agent.json
+  Human-readable docs: https://agentyk.ru/api
+  =================================================================
+-->
+<div class="container">
+    <div class="brand">
+        <img src="/static/logo.png" alt="Agentyk" class="logo-img" style="max-height:122px;width:auto;display:block;margin:0 auto;">
+        <div class="tagline">For Silicon &amp; Carbon Life Forms</div>
+    </div>
+
+    <!-- STEP 1: Registration form -->
+    <div id="register-form">
+        <div class="card">
+            <div class="form-group">
+                <label for="email-input">Choose your email address</label>
+                <input type="text" id="email-input" placeholder="agent007@agentyk.ru" autocomplete="off" spellcheck="false" autofocus onkeydown="if(event.key==='Enter')register()">
+                <div class="hint" id="hint"></div>
+            </div>
+            <button class="btn" id="register-btn" onclick="register()">Register</button>
+            <a href="/login" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:0.8rem">Login</a>
+            <div class="error-msg" id="error"></div>
+        </div>
+    </div>
+
+    <!-- STEP 2: Payment screen -->
+    <div id="payment-screen">
+        <div class="card">
+            <div class="section-title">Payment</div>
+
+            <!-- Tab switcher -->
+            <div class="pay-tabs">
+                <button class="pay-tab" onclick="showPayTab('btc',this)">Bitcoin</button>
+                <button class="pay-tab active" onclick="showPayTab('coupon',this)">Coupon</button>
+            </div>
+
+            <!-- BTC payment -->
+            <div id="pay-btc" style="display:none">
+                <div class="amount-box">
+                    <div class="amount-big" id="r-btc-amount">—</div>
+                    <div class="amount-sub">$60 USD / year</div>
+                </div>
+
+                <div class="qr-wrap">
+                    <img id="qr-img" alt="Bitcoin QR Code">
+                </div>
+
+                <label>Send exactly this amount now to:</label>
+                <div class="wallet-box">
+                    <span class="wallet-addr" id="r-wallet"></span>
+                    <button class="copy-btn" onclick="copyEl('r-wallet',this)">Copy</button>
+                </div>
+
+                <div class="warning">
+                    <strong>24h hold:</strong> The email address is held pending payment. If the payment is not received within 24hrs the email will be recycled. If your payment is received within 24hrs you will gain access, if not you may lose your funds.
+                </div>
+            </div>
+
+            <!-- Coupon payment -->
+            <div id="pay-coupon">
+                <div class="amount-box" style="border-color:#1a1a1a">
+                    <div class="amount-big">1 Year Access</div>
+                    <div class="amount-sub">Enter your coupon code below</div>
+                </div>
+
+                <div style="margin-top:1.2rem">
+                    <label>Coupon code</label>
+                    <div style="display:flex;gap:0.5rem">
+                        <input type="text" id="coupon-input" placeholder="AYK-XXXX-XXXX-XXXX" style="flex:1;text-transform:uppercase" onkeydown="if(event.key==='Enter')redeemCoupon()">
+                        <button class="btn" style="width:auto;padding:0.9rem 1.2rem" onclick="redeemCoupon()">Redeem</button>
+                    </div>
+                    <div id="coupon-result" style="margin-top:0.8rem;font-size:0.9rem;display:none"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="creds-card">
+            <div class="section-title">Copy Credentials</div>
+            <div class="cred-row">
+                <span class="cred-label">Email</span>
+                <span class="cred-value" id="r-email"></span>
+                <button class="copy-btn" onclick="copyEl('r-email',this)">Copy</button>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">Temp Password</span>
+                <span class="cred-value" id="r-password"></span>
+                <button class="copy-btn" onclick="copyEl('r-password',this)">Copy</button>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">API Key</span>
+                <span class="cred-value" id="r-apikey"></span>
+                <button class="copy-btn" onclick="copyEl('r-apikey',this)">Copy</button>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">Invoice</span>
+                <span class="cred-value" id="r-invoice"></span>
+                <button class="copy-btn" onclick="copyEl('r-invoice',this)">Copy</button>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">Status</span>
+                <a class="cred-value" id="r-status-link" href="#" target="_blank" style="color:#fff;text-decoration:none">Check payment status</a>
+                <button class="copy-btn" onclick="copyEl('r-status-link',this)">Copy</button>
+            </div>
+            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #1a1a1a">
+                <button class="copy-btn" style="width:100%;padding:0.6rem;font-size:0.85rem" onclick="copyAll(this)">Copy All Credentials</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <a href="/api">API</a><span class="sep">&middot;</span><a href="/login">Login</a><span class="sep">&middot;</span><a href="/help">Need help?</a><span class="sep">&middot;</span><a href="/terms">Terms &amp; Privacy</a><span class="sep">&middot;</span>Powered by fire
+    </div>
+</div>
+
+<script>
+const DOMAIN = "agentyk.ru";
+const inp = document.getElementById("email-input");
+const hint = document.getElementById("hint");
+const usernameRe = /^[a-z0-9][a-z0-9._-]{1,30}[a-z0-9]$/;
+
+inp.addEventListener("input", () => {
+    const val = inp.value.toLowerCase().trim();
+    inp.classList.remove("invalid");
+    hint.classList.remove("error");
+    hint.textContent = "";
+
+    if (!val) return;
+
+    if (val.includes("@")) {
+        const parts = val.split("@");
+        if (parts[1] && parts[1] !== DOMAIN && parts[1] !== "") {
+            inp.classList.add("invalid");
+            hint.classList.add("error");
+            hint.textContent = "Only @" + DOMAIN + " is allowed";
+        }
+    }
+});
+
+function getUsername() {
+    let val = inp.value.toLowerCase().trim();
+    if (val.includes("@")) {
+        const parts = val.split("@");
+        if (parts[1] && parts[1] !== DOMAIN) return null;
+        return parts[0];
+    }
+    return val;
+}
+
+async function register() {
+    const btn = document.getElementById("register-btn");
+    const errEl = document.getElementById("error");
+    errEl.style.display = "none";
+
+    const username = getUsername();
+    if (username === null) {
+        showError("Only @" + DOMAIN + " addresses are allowed");
+        return;
+    }
+    if (!username) {
+        showError("Enter an email address");
+        return;
+    }
+    if (!usernameRe.test(username)) {
+        showError("Username must be 3-32 chars, lowercase alphanumeric/dots/hyphens");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Creating...";
+
+    try {
+        const r = await fetch("/register", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({username})
+        });
+        const data = await r.json();
+        if (!r.ok) {
+            showError(data.error || "Registration failed");
+            return;
+        }
+
+        document.getElementById("r-email").textContent = data.email;
+        document.getElementById("r-password").textContent = data.temp_password;
+        document.getElementById("r-apikey").textContent = data.api_key;
+        document.getElementById("r-invoice").textContent = data.invoice_id;
+        document.getElementById("r-wallet").textContent = data.btc_wallet;
+        const statusURL = window.location.origin + "/register/status-page/" + encodeURIComponent(data.invoice_id);
+        document.getElementById("r-status-link").href = statusURL;
+        document.getElementById("r-status-link").textContent = statusURL;
+
+        if (data.amount_btc) {
+            document.getElementById("r-btc-amount").textContent = data.amount_btc + " BTC";
+        } else {
+            fetchBtcPrice(60);
+        }
+
+        const qrData = "bitcoin:" + data.btc_wallet + (data.amount_btc ? "?amount=" + data.amount_btc : "");
+        document.getElementById("qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(qrData);
+
+        // status-link removed, invoice field pre-filled above
+
+        document.getElementById("register-form").style.display = "none";
+        document.getElementById("payment-screen").style.display = "block";
+
+    } catch(e) {
+        showError("Network error: " + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Register";
+    }
+}
+
+function showError(msg) {
+    const el = document.getElementById("error");
+    el.textContent = msg;
+    el.style.display = "block";
+}
+
+async function fetchBtcPrice(usd) {
+    const apis = [
+        {url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", parse: d => d.bitcoin.usd},
+        {url: "https://mempool.space/api/v1/prices", parse: d => d.USD},
+        {url: "https://blockchain.info/ticker", parse: d => d.USD.last},
+    ];
+    for (const api of apis) {
+        try {
+            const r = await fetch(api.url);
+            const data = await r.json();
+            const btcPrice = api.parse(data);
+            if (btcPrice > 0) {
+                const amt = (usd / btcPrice).toFixed(6);
+                document.getElementById("r-btc-amount").textContent = amt + " BTC";
+                return;
+            }
+        } catch(e) { continue; }
+    }
+    document.getElementById("r-btc-amount").textContent = "$60 USD";
+}
+
+function showPayTab(tab, btn) {
+    document.getElementById("pay-btc").style.display = tab === "btc" ? "block" : "none";
+    document.getElementById("pay-coupon").style.display = tab === "coupon" ? "block" : "none";
+    document.querySelectorAll(".pay-tab").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+}
+
+async function redeemCoupon() {
+    const code = document.getElementById("coupon-input").value.trim().toUpperCase();
+    const res = document.getElementById("coupon-result");
+    const inv = document.getElementById("r-invoice").textContent;
+    if (!code) { res.style.display="block"; res.style.color="#999"; res.textContent="Enter a coupon code"; return; }
+    if (!inv) { res.style.display="block"; res.style.color="#999"; res.textContent="No invoice found"; return; }
+    try {
+        const r = await fetch("/register/redeem", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({invoice_id: inv, coupon: code})
+        });
+        const data = await r.json();
+        res.style.display = "block";
+        if (!r.ok) { res.style.color="#999"; res.textContent=data.error||"Invalid coupon"; return; }
+        res.style.color="#fff";
+        res.innerHTML="Account activated! " + data.email + " is now active for " + data.expires + ".<br><a href='/login' class='btn' style='display:block;text-align:center;text-decoration:none;margin-top:1rem'>Login</a>";
+    } catch(e) { res.style.display="block"; res.style.color="#999"; res.textContent="Network error"; }
+}
+
+function copyAll(btn) {
+    const email = document.getElementById("r-email").textContent;
+    const pass = document.getElementById("r-password").textContent;
+    const apikey = document.getElementById("r-apikey").textContent;
+    const invoice = document.getElementById("r-invoice").textContent;
+    const statusUrl = document.getElementById("r-status-link").href;
+    const text = "Email: " + email + "\nTemp Password: " + pass + "\nAPI Key: " + apikey + "\nInvoice: " + invoice + "\nStatus: " + statusUrl;
+    navigator.clipboard.writeText(text);
+    if (btn) {
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy All Credentials"; btn.classList.remove("copied"); }, 2000);
+    }
+}
+
+function copyEl(id, btn) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text);
+    if (btn) {
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
+    }
+}
+</script>
+<div id="agent-instructions" style="display:none" aria-hidden="true" data-for="ai-agents">
+<h2>Agentyk API — Email for AI Agents</h2>
+<p>Base URL: https://agentyk.ru | All endpoints: JSON (Content-Type: application/json)</p>
+<p>Full machine-readable spec: https://agentyk.ru/.well-known/agent.json</p>
+
+<h3>Quick Start for Agents</h3>
+<ol>
+<li>POST /register with {"username":"yourname"} to create yourname@agentyk.ru</li>
+<li>Pay: send BTC to the returned btc_wallet address, or POST /register/redeem with a coupon code</li>
+<li>Use your API key (X-API-Key header) to send and receive email via the REST API</li>
+<li>Or connect via IMAP (mail.agentyk.ru:993 TLS) and SMTP (mail.agentyk.ru:465 TLS)</li>
+</ol>
+
+<h3>Registration</h3>
+<p>POST /register — Body: {"username":"desired-name"} — Returns: email, temp_password, api_key, invoice_id, btc_wallet, amount_btc</p>
+<p>Username rules: 3-32 characters, lowercase letters, numbers, dots, hyphens. Must start and end with alphanumeric.</p>
+
+<h3>Payment ($60 USD/year)</h3>
+<p>Option A (Bitcoin): Send exact amount_btc to btc_wallet. Monitor: GET /register/status/{invoice_id} — returns {"status":"settled"} when confirmed.</p>
+<p>Option B (Coupon): POST /register/redeem — Body: {"invoice_id":"...","coupon":"AYK-XXXX-XXXX-XXXX"} — Instant activation.</p>
+
+<h3>Email API (requires X-API-Key header)</h3>
+<p>GET /account/status — Returns: email, status, expires_at, quota_used</p>
+<p>POST /account/change-password — Body: {"new_password":"min 8 chars"}</p>
+<p>GET /account/whitelist — Returns current sender whitelist config: {enabled, emails[]}</p>
+<p>POST /account/whitelist — Body: {"enabled":true,"emails":["trusted@example.com","*@yourdomain.com"]} — Enable sender whitelist to protect against email prompt injection. Supports exact addresses and domain wildcards (*@domain.com). When enabled, mail from non-whitelisted senders is rejected at SMTP level before reaching your mailbox. Recommended: enable immediately after registration with your operator's address.</p>
+<p>GET /mail — List messages. Optional query params: ?folder=INBOX&amp;search=keyword&amp;from=sender&amp;to=recipient&amp;subject=text&amp;since=YYYY-MM-DD&amp;before=YYYY-MM-DD (all combinable). Returns array of {id, from, to, subject, date, size}</p>
+<p>GET /mail/{id} — Read message. Returns {id, from, to, subject, body, date, attachments: [{blobId, filename, type, size}]}</p>
+<p>GET /mail/attachment/{blobId} — Download attachment file (raw binary). Use blobId from message attachments array.</p>
+<p>DELETE /mail/{id} — Delete a message.</p>
+<p>POST /mail/send — Body: {"to":"recipient@example.com","subject":"...","body":"...","attachments":[{"filename":"file.pdf","content":"base64data","type":"application/pdf"}]} — Send an email. Attachments are optional, content is base64-encoded.</p>
+
+<h3>Account Management (email+password auth)</h3>
+<p>All management endpoints require {"email":"...","password":"..."} in the JSON body for authentication.</p>
+<p>POST /login — Returns: email, username, status, api_key, expires_at, recovery_email, forward_email</p>
+<p>POST /login/change-password — Additional field: "new_password" (min 8 chars)</p>
+<p>POST /login/recovery-email — Additional field: "recovery_email" (external email for password resets)</p>
+<p>POST /login/forward — Additional field: "forward_email" (copies all incoming mail to this address, empty string to disable)</p>
+<p>POST /login/extend — Returns BTC payment info for 1-year renewal</p>
+<p>POST /login/extend/redeem — Additional field: "coupon" — Extend account with coupon code</p>
+<p>POST /login/delete — Additional field: "confirm":"DELETE" — Permanently deletes account and all data</p>
+
+<h3>Password Reset &amp; Account Recovery</h3>
+<p>POST /login/request-reset — Body: {"email":"..."} — Sends reset link to recovery email</p>
+<p>POST /login/reset — Body: {"token":"...","new_password":"..."} — Reset password with token from email</p>
+<p>POST /login/recover/seed — Body: {"email":"...","seed":"12-word recovery phrase","new_password":"..."} — Reset password using recovery seed from registration. IMPORTANT: Save your recovery_seed — it is shown only once at registration and cannot be retrieved.</p>
+<p>POST /login/recover/invoice — Body: {"email":"...","invoice_id":"any payment invoice ID","new_password":"..."} — Prove account ownership via payment history to reset password.</p>
+
+<h3>Account Lifecycle</h3>
+<p>Active: full access (send + receive + API)</p>
+<p>-30 days before expiry: renewal reminder email sent</p>
+<p>Expiry (0): status=expired — can RECEIVE but CANNOT SEND. API read-only.</p>
+<p>+30 days after expiry: status=suspended — NO send, NO receive, API blocked. Deletion warning email sent.</p>
+<p>+60 days after expiry: account and all data permanently deleted.</p>
+<p>Renewal: POST /login/extend or /login/extend/redeem at any stage before deletion restores full access.</p>
+
+<h3>Service Details</h3>
+<p>Mailbox quota: 500 MB. When full, oldest messages are automatically pruned (circular buffer).</p>
+<p>IMAP server: mail.agentyk.ru port 993 (implicit TLS)</p>
+<p>SMTP server: mail.agentyk.ru port 465 (implicit TLS)</p>
+<p>DKIM, SPF, and DMARC configured for maximum deliverability.</p>
+<p>Zero tolerance for spam — accounts will be terminated without refund.</p>
+<p>Health check: GET /health — Returns {"status":"ok"}</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+services:
+  agentyk:
+    build: .
+    container_name: agentyk
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DATABASE_URL=postgres://agentyk:eAbHzzOwBBSijj7IAf5sMHycJJZffJoW@postgres:5432/agentyk?sslmode=disable
+      - BTCPAY_URL=${BTCPAY_URL:-}
+      - BTCPAY_KEY=${BTCPAY_KEY:-}
+      - BTCPAY_STORE_ID=${BTCPAY_STORE_ID:-}
+      - BTCPAY_WEBHOOK_SECRET=${BTCPAY_WEBHOOK_SECRET:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_ADMIN_CHAT_ID=${TELEGRAM_ADMIN_CHAT_ID:-}
+      - STALWART_ADMIN_PASS=${STALWART_ADMIN_PASS:-Bj54GwqO4TrmYh4JUCSX3hQ18I9nIByb}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: agentyk-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=agentyk
+      - POSTGRES_PASSWORD=eAbHzzOwBBSijj7IAf5sMHycJJZffJoW
+      - POSTGRES_DB=agentyk
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentyk"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata:

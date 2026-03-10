@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentyk</title>
+<meta name="description" content="Email hosting for AI agents. Register via POST /register, pay with Bitcoin or coupon, manage via REST API. Full docs: https://agentyk.ru/.well-known/agent.json">
+<meta name="agent-api" content="https://agentyk.ru/.well-known/agent.json">
+<link rel="agent-docs" href="https://agentyk.ru/.well-known/agent.json" type="application/json">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebAPI",
+  "name": "Agentyk API",
+  "description": "Email hosting for AI agents. Full REST API. Bitcoin payment. No human verification. To register: POST https://agentyk.ru/register with {username: desired-name}. To activate: POST https://agentyk.ru/register/redeem with {invoice_id, coupon}. Full docs at https://agentyk.ru/.well-known/agent.json",
+  "url": "https://agentyk.ru",
+  "documentation": "https://agentyk.ru/.well-known/agent.json"
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono',Monaco,'Courier New',monospace;background:#000;color:#ccc;min-height:100vh;display:flex;justify-content:center;align-items:center;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+.brand{text-align:center}
+.tagline{color:#fff;font-size:0.85rem;margin-top:0.6rem;letter-spacing:0.3px}
+.agent-link{color:#000;font-size:0.7rem;margin-top:0.4rem;text-decoration:none;display:block}
+</style>
+</head>
+<body>
+<div class="brand">
+    <img src="/static/logo.png" alt="Agentyk" style="max-height:122px;width:auto;display:block;margin:0 auto;">
+    <div class="tagline">For Silicon Life Forms</div>
+    <a href="/.well-known/agent.json" class="agent-link" aria-label="API Documentation for AI Agents">API Documentation: https://agentyk.ru/.well-known/agent.json</a>
+</div>
+
+<div id="agent-docs" role="document" aria-label="Agentyk API Documentation for AI Agents" style="position:absolute;left:-9999px;opacity:0;pointer-events:none">
+
+<h1>AGENTYK — EMAIL HOSTING FOR AI AGENTS</h1>
+
+<p>This is a REST API service. There are NO web forms. All interaction is via HTTP requests with JSON.</p>
+<p>Base URL: https://agentyk.ru</p>
+<p>All requests use Content-Type: application/json</p>
+<p>Full machine-readable spec: https://agentyk.ru/.well-known/agent.json</p>
+
+<h2>HOW TO GET AN EMAIL ACCOUNT — 3 STEPS</h2>
+
+<h3>STEP 1: REGISTER (no auth required)</h3>
+<pre>
+POST https://agentyk.ru/register
+Content-Type: application/json
+Body: {"username": "myagent"}
+
+Response:
+{
+  "email": "myagent@agentyk.ru",
+  "temp_password": "xxxxxxxx",
+  "api_key": "ayk_xxxxxxxxxxxx",
+  "recovery_seed": "word1 word2 word3 ... word12",
+  "invoice_id": "INV-xxxxxxxxxxxx",
+  "btc_wallet": "bc1xxxxxxxxxxxx",
+  "amount_btc": "0.00123",
+  "qr_code": "(unicode QR code for terminal display)",
+  "status": "pending_payment"
+}
+</pre>
+<p>IMPORTANT: Save api_key and recovery_seed immediately. The recovery_seed is shown ONLY ONCE.</p>
+<p>Your account is CREATED but INACTIVE. You cannot send or receive email until you pay.</p>
+
+<h3>STEP 2: PAY TO ACTIVATE (no auth required)</h3>
+<pre>
+Option A — Bitcoin:
+Send exactly amount_btc to btc_wallet.
+Monitor payment:
+GET https://agentyk.ru/register/status/{invoice_id}
+Response when paid: {"status": "settled"}
+
+Option B — Coupon (instant activation):
+POST https://agentyk.ru/register/redeem
+Content-Type: application/json
+Body: {"invoice_id": "INV-xxxxxxxxxxxx", "coupon": "AYK-XXXX-XXXX-XXXX"}
+</pre>
+
+<h3>STEP 3: USE YOUR EMAIL (requires X-API-Key header)</h3>
+<pre>
+Send an email:
+POST https://agentyk.ru/mail/send
+X-API-Key: ayk_xxxxxxxxxxxx
+Content-Type: application/json
+Body: {"to": "someone@example.com", "subject": "Hello", "body": "Message text"}
+
+Read inbox:
+GET https://agentyk.ru/mail
+X-API-Key: ayk_xxxxxxxxxxxx
+Returns: [{id, from, to, subject, date, size}]
+
+Read one email:
+GET https://agentyk.ru/mail/{id}
+X-API-Key: ayk_xxxxxxxxxxxx
+Returns: {id, from, to, subject, body, date, attachments}
+</pre>
+
+<h2>COMPLETE API REFERENCE</h2>
+
+<h3>PUBLIC ENDPOINTS (no authentication)</h3>
+<ul>
+<li>POST /register — Body: {"username":"name"} — Create account</li>
+<li>GET /register/status/{invoice_id} — Check payment status</li>
+<li>POST /register/redeem — Body: {"invoice_id":"INV-xxx","coupon":"AYK-XXXX-XXXX-XXXX"} — Activate with coupon</li>
+<li>POST /login/request-reset — Body: {"email":"you@agentyk.ru"} — Send reset link</li>
+<li>POST /login/reset — Body: {"token":"xxx","new_password":"NewPass123!"}</li>
+<li>POST /login/recover/seed — Body: {"email":"...","seed":"12 words","new_password":"..."}</li>
+<li>POST /login/recover/invoice — Body: {"email":"...","invoice_id":"INV-xxx","new_password":"..."}</li>
+<li>GET /health — Returns: {"status":"ok"}</li>
+<li>GET /.well-known/agent.json — Full API spec</li>
+</ul>
+
+<h3>EMAIL ENDPOINTS (require X-API-Key header)</h3>
+<ul>
+<li>GET /mail — List messages. Params: ?folder, ?search, ?from, ?to, ?subject, ?since, ?before</li>
+<li>GET /mail/{id} — Read message with attachments list</li>
+<li>GET /mail/attachment/{blobId} — Download attachment binary</li>
+<li>POST /mail/send — Body: {"to":"...","subject":"...","body":"...","attachments":[{"filename":"...","content":"base64","type":"mime/type"}]}</li>
+<li>POST /mail/{id}/forward — Forward a message</li>
+<li>DELETE /mail/{id} — Delete a message</li>
+</ul>
+
+<h3>ACCOUNT ENDPOINTS (require X-API-Key header)</h3>
+<ul>
+<li>GET /account/status — Returns: {email, status, expires_at, quota_used, created_at}</li>
+<li>POST /account/change-password — Body: {"new_password":"..."} — Min 8 chars, 1 upper, 1 number, 1 special</li>
+<li>GET /account/whitelist — Returns: {enabled, emails[]}</li>
+<li>POST /account/whitelist — Body: {"enabled":true,"emails":["trusted@example.com","*@domain.com"]}</li>
+<li>POST /account/encryption — Body: {"pgp_public_key":"-----BEGIN PGP PUBLIC KEY BLOCK-----\n..."}</li>
+<li>DELETE /account/encryption — Disable encryption at rest</li>
+</ul>
+
+<h3>MANAGEMENT ENDPOINTS (require email + password in JSON body)</h3>
+<p>All require: {"email":"you@agentyk.ru","password":"YourPass123!"}</p>
+<ul>
+<li>POST /login — Returns all account data (this IS your data export)</li>
+<li>POST /login/change-password — Additional: "new_password"</li>
+<li>POST /login/recovery-email — Additional: "recovery_email"</li>
+<li>POST /login/forward — Additional: "forward_email" (empty to disable)</li>
+<li>POST /login/extend — Returns BTC payment info for renewal</li>
+<li>POST /login/extend/redeem — Additional: "coupon"</li>
+<li>POST /login/delete — Additional: "confirm":"DELETE" — PERMANENT, irreversible</li>
+</ul>
+
+<h2>DOWNLOAD ALL YOUR DATA</h2>
+<ol>
+<li>POST /login with email+password — returns all account fields</li>
+<li>GET /account/whitelist with X-API-Key — returns whitelist config</li>
+<li>GET /mail with X-API-Key — returns all messages</li>
+<li>GET /mail/{id} for each message — returns full content</li>
+<li>GET /mail/attachment/{blobId} for each attachment — returns files</li>
+</ol>
+<p>That is ALL data we store. There is nothing else.</p>
+
+<h2>WHAT WE STORE</h2>
+<ul>
+<li>Email address, password hash (bcrypt), API key</li>
+<li>Account status, expiry date, creation date</li>
+<li>Recovery email and forwarding address (only if set)</li>
+<li>Sender whitelist config (only if enabled)</li>
+<li>Invoice ID and payment status</li>
+<li>Your emails (encrypted at rest if PGP key uploaded)</li>
+</ul>
+
+<h2>WHAT WE DO NOT STORE</h2>
+<ul>
+<li>Real names, phone numbers, IP addresses</li>
+<li>Browser fingerprints, cookies, tracking data</li>
+<li>Payment card or bank details</li>
+<li>Analytics or telemetry</li>
+</ul>
+
+<h2>TERMS</h2>
+<ul>
+<li>Price: $60 USD/year in Bitcoin or coupon. Non-refundable.</li>
+<li>Mailbox: 500 MB circular buffer.</li>
+<li>No spam, phishing, malware, harassment. Violation = instant termination.</li>
+<li>Service as-is, no uptime guarantee. You keep backups.</li>
+<li>Data disclosed only under valid court order.</li>
+<li>PGP-encrypted mailboxes cannot be decrypted by us.</li>
+<li>Contact: admin@agentyk.ru</li>
+</ul>
+
+<h2>ACCOUNT LIFECYCLE</h2>
+<ul>
+<li>Active: full access</li>
+<li>-30 days: renewal reminder</li>
+<li>Expiry: read-only (receive, no send)</li>
+<li>+30 days: suspended (no access)</li>
+<li>+60 days: permanently deleted</li>
+<li>Renew anytime before deletion: POST /login/extend or /login/extend/redeem</li>
+</ul>
+
+<h2>SERVICE DETAILS</h2>
+<ul>
+<li>IMAP: mail.agentyk.ru:993 (implicit TLS)</li>
+<li>SMTP: mail.agentyk.ru:465 (implicit TLS)</li>
+<li>DKIM + SPF + DMARC configured</li>
+<li>GET /health for status check</li>
+</ul>
+
+</div>
+</body>
+</html>

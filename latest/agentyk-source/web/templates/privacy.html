@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentyk — Privacy</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono',Monaco,'Courier New',monospace;background:#000;color:#ccc;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+.container{max-width:500px;width:100%}
+.brand{text-align:center;margin-bottom:2rem}
+.tagline{color:#fff;font-size:0.85rem;margin-top:0.4rem;letter-spacing:0.3px}
+.card{background:#0a0a0a;border:1px solid #1a1a1a;padding:24px;margin-bottom:1.5rem}
+h2{color:#fff;font-size:0.9rem;font-weight:600;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.5px}
+p,li{font-size:0.82rem;line-height:1.6;color:#999;margin-bottom:0.8rem}
+ul{padding-left:1.2rem;margin-bottom:1rem}
+li{margin-bottom:0.4rem}
+.highlight{color:#fff}
+label{display:block;color:#555;margin-bottom:0.5rem;font-size:0.78rem;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+input[type=text],input[type=password]{width:100%;padding:0.9rem 0.2rem;background:transparent;border:none;border-bottom:1px solid #333;color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:1rem;border-radius:0;transition:border-color 0.2s}
+input:focus{outline:none;border-bottom-color:#fff}
+input::placeholder{color:#333}
+.form-group{margin-bottom:1.5rem}
+.btn{width:100%;padding:14px;background:transparent;color:#ccc;border:1px solid #333;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.9rem;font-weight:500;cursor:pointer;border-radius:0;transition:all 0.2s;letter-spacing:0.5px;text-transform:uppercase}
+.btn:hover{border-color:#fff;color:#fff}
+.error-msg{color:#999;margin-top:1rem;display:none;font-size:0.82rem}
+.info-row{display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid #111}
+.info-row:last-child{border-bottom:none}
+.info-label{color:#555;font-size:0.82rem}
+.info-value{color:#fff;font-size:0.82rem;text-align:right;max-width:60%;overflow:hidden;text-overflow:ellipsis}
+#my-data{display:none}
+.footer{text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid #111;font-size:0.75rem;color:#333}
+.footer a{color:#555;text-decoration:none}
+.footer a:hover{color:#fff}
+.sep{margin:0 0.5rem}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="brand">
+        <img src="/static/logo.png" alt="Agentyk" style="max-height:122px;width:auto;display:block;margin:0 auto;">
+        <div class="tagline">For Silicon &amp; Carbon Life Forms</div>
+    </div>
+
+    <!-- Operator -->
+    <div class="card">
+        <h2>Who We Are</h2>
+        <p>Agentyk is an email hosting service for AI agents and privacy-conscious users. Operated by <span class="highlight">Agentyk</span>.</p>
+        <p>Contact: <span class="highlight">admin@agentyk.ru</span></p>
+        <p>Server location: <span class="highlight">European Union</span></p>
+    </div>
+
+    <!-- What We Store -->
+    <div class="card">
+        <h2>What We Store</h2>
+        <ul>
+            <li><span class="highlight">Email address</span> (your username@agentyk.ru)</li>
+            <li><span class="highlight">Password hash</span> (bcrypt &mdash; we cannot read your password)</li>
+            <li><span class="highlight">API key</span></li>
+            <li><span class="highlight">Account status</span> and expiry date</li>
+            <li><span class="highlight">Recovery email</span> (only if you set one)</li>
+            <li><span class="highlight">Forwarding address</span> (only if you set one)</li>
+            <li><span class="highlight">Sender whitelist</span> (only if you enable it)</li>
+            <li><span class="highlight">Invoice ID</span> and payment status</li>
+            <li><span class="highlight">Your emails</span> (encrypted at rest if you upload a PGP key)</li>
+        </ul>
+    </div>
+
+    <!-- What We Don't Store -->
+    <div class="card">
+        <h2>What We Do Not Store</h2>
+        <ul>
+            <li>Your real name</li>
+            <li>Phone number</li>
+            <li>IP addresses or access logs</li>
+            <li>Browser fingerprints</li>
+            <li>Cookies or tracking data</li>
+            <li>Payment card or bank details</li>
+            <li>Analytics or telemetry of any kind</li>
+        </ul>
+    </div>
+
+    <!-- Legal Basis -->
+    <div class="card">
+        <h2>Legal Basis</h2>
+        <p>We process your data under <span class="highlight">legitimate interest</span>: providing the email service you registered for. No data is processed beyond what is necessary to operate your account.</p>
+        <p>We do not sell, share, or transfer your data to any third party. No advertising. No analytics. No partnerships.</p>
+    </div>
+
+    <!-- Retention -->
+    <div class="card">
+        <h2>Data Retention</h2>
+        <p><span class="highlight">Active accounts:</span> Data is kept for the lifetime of the account.</p>
+        <p><span class="highlight">Expired accounts:</span> Data is retained for 60 days after expiry (30 days suspended + 30 days grace), then permanently deleted.</p>
+        <p><span class="highlight">Deleted accounts:</span> All data is purged immediately upon deletion. This is irreversible.</p>
+        <p><span class="highlight">Backups:</span> Encrypted backups may retain data for up to 30 days after deletion.</p>
+    </div>
+
+    <!-- Your Rights -->
+    <div class="card">
+        <h2>Your Rights</h2>
+        <p><span class="highlight">Access:</span> See all your data below by logging in.</p>
+        <p><span class="highlight">Deletion:</span> Delete your account and all data permanently via the dashboard or <code style="color:#999">POST /login/delete</code>.</p>
+        <p><span class="highlight">Encryption:</span> Upload a PGP key to encrypt your mailbox at rest &mdash; after that, even we cannot read your emails.</p>
+        <p><span class="highlight">Portability:</span> Use the API to export all your emails and account data at any time.</p>
+        <p><span class="highlight">Complaint:</span> If you believe your data rights have been violated, contact us at admin@agentyk.ru.</p>
+    </div>
+
+    <!-- Law Enforcement -->
+    <div class="card">
+        <h2>Law Enforcement</h2>
+        <p>We will only disclose data when compelled by a valid court order in the applicable jurisdiction. We will notify the affected user unless legally prohibited from doing so.</p>
+        <p>If your mailbox is encrypted with PGP, we <span class="highlight">cannot</span> provide email content even if ordered to &mdash; we do not hold your private key.</p>
+    </div>
+
+    <!-- Show My Data -->
+    <div class="card">
+        <h2>Show My Data</h2>
+        <p>Enter your credentials to see everything we have on you.</p>
+        <div class="form-group">
+            <label for="priv-email">Email</label>
+            <input type="text" id="priv-email" placeholder="you@agentyk.ru">
+        </div>
+        <div class="form-group">
+            <label for="priv-pass">Password</label>
+            <input type="password" id="priv-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')showMyData()">
+        </div>
+        <button class="btn" onclick="showMyData()">Show My Data</button>
+        <div class="error-msg" id="priv-error"></div>
+    </div>
+
+    <div class="card" id="my-data">
+        <h2>Your Data</h2>
+        <p style="margin-bottom:1rem;color:#555">This is everything we store about you.</p>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="d-email"></span></div>
+        <div class="info-row"><span class="info-label">Username</span><span class="info-value" id="d-user"></span></div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value" id="d-status"></span></div>
+        <div class="info-row"><span class="info-label">Expires</span><span class="info-value" id="d-expires"></span></div>
+        <div class="info-row"><span class="info-label">API Key</span><span class="info-value" id="d-apikey" style="font-size:0.75rem"></span></div>
+        <div class="info-row"><span class="info-label">Storage Used</span><span class="info-value" id="d-quota"></span></div>
+        <div class="info-row"><span class="info-label">Recovery Email</span><span class="info-value" id="d-recovery"></span></div>
+        <div class="info-row"><span class="info-label">Forwarding</span><span class="info-value" id="d-forward"></span></div>
+        <div class="info-row"><span class="info-label">Password</span><span class="info-value">Stored as bcrypt hash (unreadable)</span></div>
+    </div>
+
+    <div class="footer">
+        <a href="/">Register</a><span class="sep">&middot;</span><a href="/login">Login</a><span class="sep">&middot;</span><a href="/terms">Terms</a><span class="sep">&middot;</span><a href="/help">Help</a>
+    </div>
+</div>
+
+<script>
+async function showMyData() {
+    const email = document.getElementById("priv-email").value.trim();
+    const pass = document.getElementById("priv-pass").value;
+    const errEl = document.getElementById("priv-error");
+    errEl.style.display = "none";
+    if (!email || !pass) { errEl.textContent = "Email and password required"; errEl.style.display = "block"; return; }
+    try {
+        const r = await fetch("/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email: email, password: pass})
+        });
+        const data = await r.json();
+        if (!r.ok) { errEl.textContent = data.error || "Login failed"; errEl.style.display = "block"; return; }
+        document.getElementById("d-email").textContent = data.email || "\u2014";
+        document.getElementById("d-user").textContent = data.username || "\u2014";
+        document.getElementById("d-status").textContent = data.status || "\u2014";
+        const exp = data.expires_at;
+        if (exp) {
+            const days = Math.ceil((new Date(exp) - new Date()) / 86400000);
+            document.getElementById("d-expires").textContent = exp + " (" + (days > 0 ? days + " days left" : "expired") + ")";
+        } else {
+            document.getElementById("d-expires").textContent = "\u2014";
+        }
+        document.getElementById("d-apikey").textContent = data.api_key || "\u2014";
+        document.getElementById("d-quota").textContent = (data.quota_used || 0) + " bytes";
+        document.getElementById("d-recovery").textContent = data.recovery_email || "Not set";
+        document.getElementById("d-forward").textContent = data.forward_email || "Not set";
+        document.getElementById("my-data").style.display = "block";
+        document.getElementById("my-data").scrollIntoView({behavior: "smooth"});
+    } catch(e) { errEl.textContent = "Network error"; errEl.style.display = "block"; }
+}
+</script>
+</body>
+</html>

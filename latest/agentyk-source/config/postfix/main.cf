@@ -1,0 +1,149 @@
+# AgentYK Postfix Configuration
+# Mail transfer agent for agentyk.ru
+
+# ---------------------------------------------------------------------------
+# BASIC CONFIGURATION
+# ---------------------------------------------------------------------------
+
+# Hostname and domain
+myhostname = mail.agentyk.ru
+mydomain = agentyk.ru
+myorigin = $mydomain
+inet_interfaces = all
+inet_protocols = ipv4
+
+# Trusted networks
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+
+# Destination classes
+mydestination = localhost, localhost.$mydomain
+relay_domains = 
+
+# Message size limit (25MB)
+message_size_limit = 26214400
+mailbox_size_limit = 0
+
+# ---------------------------------------------------------------------------
+# TLS CONFIGURATION
+# ---------------------------------------------------------------------------
+
+# SMTP TLS (outgoing)
+smtp_tls_security_level = may
+smtp_tls_loglevel = 1
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtpd_tls_security_level = may
+smtpd_tls_auth_only = yes
+smtpd_tls_cert_file = /etc/letsencrypt/live/agentyk.ru/fullchain.pem
+smtpd_tls_key_file = /etc/letsencrypt/live/agentyk.ru/privkey.pem
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_dh1024_param_file = ${config_directory}/dh2048.pem
+
+# TLS protocols (secure only)
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+
+# ---------------------------------------------------------------------------
+# SMTPD RESTRICTIONS (Anti-spam)
+# ---------------------------------------------------------------------------
+
+smtpd_helo_required = yes
+smtpd_delay_reject = yes
+
+# HELO/EHLO restrictions
+smtpd_helo_restrictions =
+    permit_mynetworks,
+    reject_invalid_helo_hostname,
+    reject_non_fqdn_helo_hostname,
+    reject_unknown_helo_hostname,
+    permit
+
+# Sender restrictions  
+smtpd_sender_restrictions =
+    permit_mynetworks,
+    reject_non_fqdn_sender,
+    reject_unknown_sender_domain,
+    permit
+
+# Recipient restrictions (strict)
+smtpd_recipient_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination,
+    reject_non_fqdn_recipient,
+    reject_unknown_recipient_domain,
+    reject_rbl_client zen.spamhaus.org,
+    reject_rbl_client bl.spamcop.net,
+    permit
+
+# Data restrictions
+smtpd_data_restrictions = reject_unauth_pipelining
+
+# ---------------------------------------------------------------------------
+# SASL AUTHENTICATION (Dovecot)
+# ---------------------------------------------------------------------------
+
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous, noplaintext
+smtpd_sasl_tls_security_options = noanonymous
+broken_sasl_auth_clients = yes
+
+# ---------------------------------------------------------------------------
+# VIRTUAL MAILBOX CONFIGURATION
+# ---------------------------------------------------------------------------
+
+# Virtual mail user
+virtual_mailbox_domains = $mydomain
+virtual_mailbox_base = /var/mail/vhosts
+virtual_mailbox_maps = hash:/etc/postfix/virtual_mailbox_maps
+virtual_minimum_uid = 100
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+
+# Alias maps
+virtual_alias_maps = hash:/etc/postfix/virtual_aliases
+
+# ---------------------------------------------------------------------------
+# LMTP DELIVERY
+# ---------------------------------------------------------------------------
+
+# Use Dovecot LMTP for delivery
+mailbox_transport = lmtp:unix:private/dovecot-lmtp
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+
+# ---------------------------------------------------------------------------
+# RATE LIMITING
+# ---------------------------------------------------------------------------
+
+# Connection limits
+smtpd_client_connection_rate_limit = 30
+smtpd_client_message_rate_limit = 20
+smtpd_client_recipient_rate_limit = 50
+anvil_rate_time_unit = 60s
+
+# ---------------------------------------------------------------------------
+# LOGGING
+# ---------------------------------------------------------------------------
+
+maillog_file = /var/log/mail.log
+maillog_file_permissions = 0644
+
+# ---------------------------------------------------------------------------
+# MISCELLANEOUS
+# ---------------------------------------------------------------------------
+
+# Bounce handling
+bounce_queue_lifetime = 1d
+maximal_queue_lifetime = 5d
+notify_classes = resource, software
+
+# MIME processing
+mime_header_checks = 
+deferred_transport = 
+
+# Compatibility
+compatibility_level = 3.6

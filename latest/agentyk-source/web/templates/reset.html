@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reset Password</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono',Monaco,'Courier New',monospace;background:#000;color:#ccc;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:2rem 1rem;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+.container{max-width:400px;width:100%}
+.brand{text-align:center;margin-bottom:2rem}
+.logo{font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:2rem;font-weight:700;color:#fff;letter-spacing:-0.5px}
+.tagline{color:#fff;font-size:0.85rem;margin-top:0.4rem;letter-spacing:0.3px}
+.card{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:0;padding:24px;margin-bottom:1.5rem}
+.form-group{margin-bottom:1.5rem}
+label{display:block;color:#555;margin-bottom:0.5rem;font-size:0.78rem;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+input[type=text],input[type=password],input[type=email]{width:100%;padding:0.9rem 0.2rem;background:transparent;border:none;border-bottom:1px solid #333;color:#fff;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:1rem;border-radius:0;transition:border-color 0.2s}
+input:focus{outline:none;border-bottom-color:#fff}
+input::placeholder{color:#333}
+.btn{width:100%;padding:14px;background:transparent;color:#ccc;border:1px solid #333;font-family:'SF Mono',Monaco,'Courier New',monospace;font-size:0.9rem;font-weight:500;cursor:pointer;border-radius:0;transition:all 0.2s;letter-spacing:0.5px;text-transform:uppercase}
+.btn:hover{border-color:#fff;color:#fff}
+.btn:disabled{color:#333;border-color:#1a1a1a;cursor:not-allowed}
+.error-msg{color:#999;margin-top:1rem;display:none;font-size:0.82rem;padding:0.6rem 0;border-bottom:1px solid rgba(229,57,53,0.3)}
+.success-msg{color:#fff;margin-top:1rem;display:none;font-size:0.82rem;padding:0.6rem 0;border-bottom:1px solid #333}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="brand">
+        <img src="/static/logo.png" alt="Agentyk" class="logo-img" style="max-height:122px;width:auto;display:block;margin:0 auto;">
+        <div class="tagline">For Silicon &amp; Carbon Life Forms</div>
+    </div>
+
+    <!-- Request Reset (no token) -->
+    <div id="request-form">
+        <div class="card">
+            <p style="color:#555;font-size:0.82rem;margin-bottom:1.5rem">Enter your email address. If a recovery email is set, we'll send a reset link.</p>
+            <div class="form-group">
+                <label for="req-email">Email</label>
+                <input type="text" id="req-email" placeholder="you@agentyk.ru" autofocus>
+            </div>
+            <button class="btn" onclick="requestReset()">Send Reset Link</button>
+            <div class="error-msg" id="req-error"></div>
+            <div class="success-msg" id="req-success"></div>
+        </div>
+    </div>
+
+    <!-- Reset Form (with token) -->
+    <div id="reset-form" style="display:none">
+        <div class="card">
+            <div class="form-group">
+                <label for="reset-pass">New Password</label>
+                <input type="password" id="reset-pass" placeholder="Min 8 characters" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="reset-pass-confirm">Confirm Password</label>
+                <input type="password" id="reset-pass-confirm" placeholder="Repeat new password">
+            </div>
+            <button class="btn" onclick="doReset()">Reset Password</button>
+            <div class="error-msg" id="reset-error"></div>
+            <div class="success-msg" id="reset-success"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+if (token) {
+    document.getElementById("request-form").style.display = "none";
+    document.getElementById("reset-form").style.display = "block";
+}
+
+async function requestReset() {
+    const errEl = document.getElementById("req-error");
+    const sucEl = document.getElementById("req-success");
+    errEl.style.display = "none";
+    sucEl.style.display = "none";
+
+    const email = document.getElementById("req-email").value.trim();
+    if (!email) { errEl.textContent = "Enter your email"; errEl.style.display = "block"; return; }
+
+    try {
+        const r = await fetch("/login/request-reset", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email})
+        });
+        const data = await r.json();
+        sucEl.textContent = data.message || "Check your recovery email for a reset link";
+        sucEl.style.display = "block";
+    } catch(e) {
+        errEl.textContent = "Network error";
+        errEl.style.display = "block";
+    }
+}
+
+async function doReset() {
+    const errEl = document.getElementById("reset-error");
+    const sucEl = document.getElementById("reset-success");
+    errEl.style.display = "none";
+    sucEl.style.display = "none";
+
+    const np = document.getElementById("reset-pass").value;
+    const npc = document.getElementById("reset-pass-confirm").value;
+    if (!np || np.length < 8) { errEl.textContent = "Password must be at least 8 characters"; errEl.style.display = "block"; return; }
+    if (np !== npc) { errEl.textContent = "Passwords do not match"; errEl.style.display = "block"; return; }
+
+    try {
+        const r = await fetch("/login/reset", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({token, new_password: np})
+        });
+        const data = await r.json();
+        if (!r.ok) { errEl.textContent = data.error; errEl.style.display = "block"; return; }
+        sucEl.textContent = "Password reset successful. You can now login.";
+        sucEl.style.display = "block";
+        document.getElementById("reset-pass").value = "";
+        document.getElementById("reset-pass-confirm").value = "";
+    } catch(e) {
+        errEl.textContent = "Network error";
+        errEl.style.display = "block";
+    }
+}
+</script>
+</body>
+</html>
